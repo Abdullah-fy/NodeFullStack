@@ -1,0 +1,21 @@
+const mongoose = require("mongoose");
+const { Schema, Types } = mongoose;
+
+const ProductSchema = new Schema({
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    category: { 
+        type: String, 
+        required: true, 
+    },
+    images: { type: [String], required: true }, // Array of image URLs
+    stockQuantity: { type: Number, required: true },
+    sellerinfo: { 
+        id: { type: Types.ObjectId, ref: 'User' }, 
+        name: { type: String } 
+    }
+}, { timestamps: true });  //////////////////////////////////added time stamp
+
+const Product = mongoose.model("Product", ProductSchema);
+module.exports = Product;
