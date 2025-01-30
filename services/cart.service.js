@@ -71,6 +71,38 @@ class CartService {
             throw new Error('Error adding item to cart: ' + error.message);
         }
     }
+
+    static async removeFromCart(customerId, productId) {
+        try {
+            // 1. Retrieve the cart
+            let cart = await CartRepo.findCartByCustomerId(customerId);
+            if (!cart) {
+                throw new Error('Cart not found');
+            }
+
+            // 2. Find the product in the cart
+            const itemIndex = cart.items.findIndex(item => item.productId === productId);
+            if (itemIndex === -1) {
+                throw new Error('Product not found in cart');
+            }
+
+            // 3. Remove the product from the cart
+            cart.items.splice(itemIndex, 1); 
+
+            // 4. Recalculate the total amount
+            cart.totalAmount = cart.items.reduce((total, item) => total + item.quantity * item.price, 0);
+
+            // 5. Save the updated cart
+            const updatedCart = await CartRepo.updateCart(customerId, {
+                items: cart.items,
+                totalAmount: cart.totalAmount,
+            });
+
+            return updatedCart;
+        } catch (error) {
+            throw new Error('Error removing item from cart: ' + error.message);
+        }
+    }
 }
 
 module.exports = CartService;
