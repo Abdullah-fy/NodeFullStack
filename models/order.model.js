@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 const { Schema, Types } = mongoose;
 
 const OrderSchema = new Schema({
-  customerId: { type: Types.ObjectId, ref: 'User', required: true },
+  customerId: { type: String, ref: 'User', required: true },
   items: [
     {
-      productId: { type: Types.ObjectId, ref: 'Product', required: true },
-      sellerId: { type: Types.ObjectId, ref: 'User', required: true }, ////////// Ref to Seller (تعديل هنا)
+      productId: { type: String, ref: 'Product', required: true },
+      sellerId: { type: String, ref: 'User', required: true }, ////////// Ref to Seller (تعديل هنا)
       quantity: { type: Number, required: true },
       price: { type: Number, required: true }, 
       itemStatus: {
@@ -38,6 +38,6 @@ const OrderSchema = new Schema({
       required: true
     }
   }
-}, { timestamps: true }); // ////////////////////////////////////////timestamps
+}, { timestamps: true }); 
 const Order = mongoose.model("Order", OrderSchema);
 module.exports = Order;
