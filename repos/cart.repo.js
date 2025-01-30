@@ -1,4 +1,3 @@
-const { model } = require('mongoose');
 const Cart = require('../models/cart.model');
 
 
@@ -31,8 +30,8 @@ class CartRepo {
         try {
             const updatedCart = await Cart.findOneAndUpdate(
                 { customerId },
-                { $set: updateData },
-                { new: true }
+                { $set: updateData },//update the specified fields
+                { new: true }//return the updated cart
             )
             if (!updatedCart) {
                 throw new Error("cart not found")

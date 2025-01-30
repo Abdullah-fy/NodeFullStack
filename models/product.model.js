@@ -13,7 +13,7 @@ const ProductSchema = new Schema({
     images: { type: [String], required: true }, // Array of image URLs
     stockQuantity: { type: Number, required: true },
     sellerinfo: { 
-        id: { type: Types.ObjectId, ref: 'User' }, 
+        id: { type: String, ref: 'User' }, 
         name: { type: String } 
     }
 }, { timestamps: true });  //////////////////////////////////added time stamp
