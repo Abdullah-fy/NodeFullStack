@@ -4,8 +4,6 @@ const connectToDB = async ({ url, databaseName, callback }) => {
   try {
     await mongoose.connect(url, {
       dbName: databaseName,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
     });
     process.nextTick(() => {
       callback();

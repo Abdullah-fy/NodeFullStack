@@ -4,9 +4,14 @@ const cors = require("cors"); // Import CORS
 const { connectToDataBase } = require("./database/mongo/index");
 const { APP_CONFIG } = require("./config/app.config");
 const cartRoutes = require("./routes/cart.routes");
+const { authenticateToken } = require('./middlewares/authontication.middleware');
+
 
 const app = express();
 const PORT = APP_CONFIG.PORT || 3000;
+
+
+
 
 app.use(cors()); // Enable CORS
 app.use(express.json());
@@ -31,6 +36,7 @@ app.use("/api/cart", cartRoutes);
   } catch (error) {
     console.error("❌ Failed to connect to the database:", error.message);
     process.exit(1);
+
   }
 })();
 
