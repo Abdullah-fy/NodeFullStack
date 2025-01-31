@@ -6,9 +6,6 @@ class CartRepo {
     static async findCartByCustomerId(customerId) {
         try {
             const cart = await Cart.findOne({ customerId });
-            if (!cart) {
-                throw new Error('Cart not found');
-            }
             return cart
         } catch (error) {
             throw new Error('Error finding cart. Please try again later.');
@@ -36,7 +33,7 @@ class CartRepo {
             if (!updatedCart) {
                 throw new Error("cart not found")
             }
-            return updateCart
+            return updatedCart
         } catch (error) {
             throw new Error('Error updating cart. Please try again later.');
         }

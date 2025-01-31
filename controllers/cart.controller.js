@@ -12,7 +12,7 @@ class CartController {
             };
 
             const cart = await CartService.addToCart(customerId, productId, quantity);
-            res.status(200).json(cart);
+            res.status(201).json(cart);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
@@ -38,7 +38,7 @@ class CartController {
     //3-Remove item from cart
     static async removeFromCart(req,res){
         try {
-            const{customerId,productId}=req.body;
+            const{customerId,productId}=req.params;
             
             //validate input
             if(!customerId || !productId){
@@ -52,6 +52,41 @@ class CartController {
             
         }
     }
+
+    //4-decrese item from cart
+    static async decfromToCart(req, res) {
+        try {
+            const { customerId, productId, quantity } = req.body;
+
+            //Validate body
+            if (!customerId || !productId || !quantity) {
+                return res.status(400).json({ message: 'Missing required fields' })
+            };
+
+            const cart = await CartService.decItemFromCart(customerId, productId, quantity);
+            res.status(201).json(cart);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+
+    //5-clear cart
+    static async clearCart(req, res) {
+        try {
+            const { customerId } = req.params;
+            //validate input
+            if (!customerId) {
+                return res.status(400).json({message:'customer Id is req'})
+            }
+
+            const cart=await CartService.clearCart(customerId);
+            res.status(200).json(cart)
+        }catch(error) {
+            res.status(500).json({message:error.message})
+         }
+
+    }
+
 
 };
 

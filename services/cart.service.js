@@ -1,5 +1,6 @@
 const CartRepo = require('../repos/cart.repo');
 const Product = require('../models/product.model');
+const { Error } = require('mongoose');
 
 class CartService {
     // Add item to cart
@@ -20,37 +21,32 @@ class CartService {
             let cart;
             try {
                 cart = await CartRepo.findCartByCustomerId(customerId);
-            } catch (error) {
-                if (error.message === 'Cart not found') {
+                if (cart === null) {
                     cart = await CartRepo.createCart({
                         customerId,
                         items: [],
                         totalAmount: 0,
-                    });
-                } else {
-                    throw new Error("Failed to retrieve or create cart");
+                    })
                 }
+            } catch (error) {
+                throw new Error("Failed to retrieve or create cart");
             }
 
             // 4. Check if the product is already in the cart
-            const itemIndex = cart.items.findIndex(item => item.productId.toString() === productId);
+            const itemIndex = cart.items.findIndex(item => item.productId === productId);
 
             if (itemIndex > -1) {
-                // 4.1 If quantity is reduced
-                if (quantity < cart.items[itemIndex].quantity) {
-                    cart.items[itemIndex].quantity = quantity;
-                } else {
-                    // 4.2 If quantity is increased
-                    if (cart.items[itemIndex].quantity + quantity > product.stockQuantity) {
-                        throw new Error(`Requested quantity exceeds available stock. Available stock: ${product.stockQuantity}`);
-                    }
-                    cart.items[itemIndex].quantity += quantity;
+                // 4.1 If quantity is increased
+                if (cart.items[itemIndex].quantity + quantity > product.stockQuantity) {
+                    throw new Error(`Requested quantity exceeds available stock. Available stock: ${product.stockQuantity}`);
                 }
-            } else {
+                cart.items[itemIndex].quantity += quantity;
+            }
+            else {
                 // 4.3 Add new item to the cart
                 cart.items.push({
                     productId,
-                    sellerId: product.sellerinfo.id, 
+                    sellerId: product.sellerinfo.id,
                     quantity,
                     price: product.price,
                 });
@@ -71,7 +67,7 @@ class CartService {
             throw new Error('Error adding item to cart: ' + error.message);
         }
     }
-
+    //remove item from cart
     static async removeFromCart(customerId, productId) {
         try {
             // 1. Retrieve the cart
@@ -87,7 +83,7 @@ class CartService {
             }
 
             // 3. Remove the product from the cart
-            cart.items.splice(itemIndex, 1); 
+            cart.items.splice(itemIndex, 1);
 
             // 4. Recalculate the total amount
             cart.totalAmount = cart.items.reduce((total, item) => total + item.quantity * item.price, 0);
@@ -103,6 +99,96 @@ class CartService {
             throw new Error('Error removing item from cart: ' + error.message);
         }
     }
+    //get cart
+    static async getCart(customerId) {
+        try {
+            let cart = await CartRepo.findCartByCustomerId(customerId);
+            if (!cart) {
+                throw new Error('Cart not found');
+            }
+            return cart;
+
+        } catch (error) {
+            throw new Error('Error retrieving cart. Please try again later.');
+        }
+    }
+    //decress from cart
+    static async decItemFromCart(customerId, productId, quantity) {
+        //1-check if product exist
+        const product = await Product.findById(productId);
+        if(!product){
+            throw new Error('Product not found');
+        }
+
+        //get cart
+        let cart;
+        try{
+            cart=await CartRepo.findCartByCustomerId(customerId);
+            if(!cart){
+                throw new Error("Cart not found");
+            }
+        }catch(error){
+            throw new Error("Failed to retrieve cart")
+        }
+
+        //if product is in cart
+        const itemIndex=cart.items.findIndex(item=>item.productId===productId);
+
+        if (itemIndex>-1){
+            //decress
+            const currentQuantity=cart.items[itemIndex].quantity;
+
+            //ensure that quantity is not less than 0
+            if (currentQuantity - quantity<0){
+                throw new Error('requested it negative')
+            }
+
+            //updated quantity
+            cart.items[itemIndex].quantity -= quantity;
+
+            //if quantity is 0 remove it from cart
+            if(cart.items[itemIndex].quantity<=0)
+            {
+                cart.items.splice(itemIndex,1);
+            }
+            
+            //update total amount
+            cart.totalAmount=cart.items.reduce((total,item)=>total+item.quantity*item.price,0);
+
+            //save cart
+            const updatedCart = await CartRepo.updateCart(customerId, {
+                items: cart.items,
+                totalAmount: cart.totalAmount,
+            });
+
+            return updatedCart;
+        }
+    }
+
+    //clear cart
+    static async clearCart(customerId){
+        try{
+        //1-get cart by id
+        const cart = await CartRepo.findCartByCustomerId(customerId);
+        if(!cart){
+            throw new Error('cart not found');
+        }
+
+        //clear
+        cart.items=[];
+        cart.totalAmount=0;
+
+        const updateCart = await CartRepo.updateCart(customerId,
+            {
+                items:cart.items,
+                totalAmount:cart.totalAmount,
+            });
+            return updateCart
+        }catch(error){
+            throw new Error(`Failed to clear cart: ${error.message}`);
+        }
+    }
+    
 }
 
 module.exports = CartService;
