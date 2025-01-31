@@ -2,17 +2,17 @@ const mongoose = require("mongoose");
 const { Schema, Types } = mongoose;
 
 const CartSchema = new Schema({
-  customerId: { type: Types.ObjectId, ref: 'User', required: true },
+  customerId: { type: String, ref: 'User', required: true },
   items: [
     {
-      productId: { type: Types.ObjectId, ref: 'Product', required: true },
-      sellerId: { type: Types.ObjectId, ref: 'User', required: true }, /////////////////// Ref to Seller (تعديل هنا)
-      quantity: { type: Number, required: true },
-      price: { type: Number, required: true }
+      productId: { type: String, ref: 'Product', required: true },
+      sellerId: { type: String, ref: 'User', required: true }, 
+      quantity: { type: Number, required: true, min: 1 },
+      price:{ type: Number, required: true, min: 0 }
     }
   ],
   totalAmount: { type: Number, required: true },
-}, { timestamps: true }); /////////////////////////////////////timestamps
+}, { timestamps: true }); 
 
 const Cart = mongoose.model("Cart", CartSchema);
 module.exports = Cart;

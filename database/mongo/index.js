@@ -10,9 +10,9 @@ const connectToDB = async ({ url, databaseName, callback }) => {
     });
   } catch (error) {
     console.error('Error connecting to DB:', error.message);
-    throw new Error("error connection to DB");
+    throw new Error("Error connecting to DB");
   }
 };
 
-module.exports = { connectToDataBase: { connectToDB } };
-
+// Export the function directly
+module.exports = { connectToDataBase: connectToDB };

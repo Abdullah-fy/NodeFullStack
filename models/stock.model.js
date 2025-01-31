@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 const { Schema, Types } = mongoose;
 
 const SupplierOrderSchema  = new Schema({
-  managerId: { type: Types.ObjectId, ref: 'User', required: true }, // Ref to Manager (Sup Admin)
-  supplierId: { type: Types.ObjectId, ref: 'User', required: true },
-  productId: { type: Types.ObjectId, ref: 'Product', required: true },
+  managerId: { type: String, ref: 'User', required: true }, // Ref to Manager (Sup Admin)
+  supplierId: { type: String, ref: 'User', required: true },
+  productId: { type: String, ref: 'Product', required: true },
   requestedQuantity: { type: Number, required: true },
   status: {
     type: String,
