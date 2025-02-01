@@ -14,4 +14,4 @@ router.post('/dec',CartController.decfromToCart);
 //clear cart
 router.delete('/clear/:customerId',CartController.clearCart);
 
-module.exports=router;
+module.exports=router; 
