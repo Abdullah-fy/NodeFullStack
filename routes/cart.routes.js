@@ -14,4 +14,5 @@ router.patch('/dec',CartController.decfromToCart);
 //clear cart
 router.delete('/clear',CartController.clearCart);
 
+
 module.exports=router;

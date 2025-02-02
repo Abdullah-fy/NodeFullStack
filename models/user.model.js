@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const validator = require('validator');
 
 const UserSchema = new mongoose.Schema({
 
     _id: { type: String, required: true}, // we will do it easilly
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true }, // Hashed password
+
+    firstName: { type: String, required: [true, 'First name is required'] },
+    lastName: { type: String, required: [true, 'Last name is required'] },
+    email: { type: String, required: true, unique: true, validate: [validator.isEmail, 'Invalid email'] },
+    password: { type: String, required: true, minlenght: 8 }, // Hashed password
     role: {
       type: String,
       enum: ['customer', 'seller', 'admin', 'manager', 'cashier', 'salesClerk', 'supplier'],
