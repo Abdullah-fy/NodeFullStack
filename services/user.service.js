@@ -75,10 +75,34 @@ async function getAllUsers() {
   }
 }
 
+async function UpdateisActiveStatus(email,Status) {
+  try{
+    const user=await getUserByEmail(email);
+    if(!user){
+      throw new Error("user Not Found");
+    }
+    if(user.isActive!=Status){
+      user.isActive=Status;
+      await User.updateOne({ email }, { $set: { isActive: Status } });
+      return { success: true, message: "Status updated successfully" };
+
+    }else {
+      console.log("Status is already set.");
+      return { success: false, message: "No changes needed" };
+    }
+
+  }catch(error){
+    console.log("error update is active status",error)
+    throw error;
+  }
+
+}
+
 module.exports = {
   createUser,
   getUserByEmail,
   updateUser,
   deleteUser,
-  getAllUsers
+  getAllUsers,
+  UpdateisActiveStatus
 };

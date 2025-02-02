@@ -72,10 +72,28 @@ async function getAllUsersController(req, res) {
   }
 }
 
+async function UpdateisActiveStatusController(req,res) {
+  try{
+     const email=req.params;
+     const status=req.body;
+     const ismodified= await userService.UpdateisActiveStatusController(email,status);
+     if(ismodified){
+      res.status(200).json({message:"isActive Status Update Succesfully"})
+     }
+      res.status(404).json(ismodified);
+
+  }catch(error){
+    console.error("Error in UpdateisActiveStatusController:" ,error);
+    res.status(500).json({message:"interval server error"})
+  }
+}
+
 module.exports = {
   createUserController,
   getUserByEmailController,
   updateUserController,
   deleteUserController,
-  getAllUsersController
+  getAllUsersController,
+  UpdateisActiveStatusController
 };
+
