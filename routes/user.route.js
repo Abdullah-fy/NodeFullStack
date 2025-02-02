@@ -7,5 +7,7 @@ router.get('/', userController.getAllUsersController);
 router.get('/:email', userController.getUserByEmailController);
 router.put('/:id', userController.updateUserController);
 router.delete('/:id', userController.deleteUserController);
+router.delete('/:email', userController.UpdateisActiveStatusController);
+
 
 module.exports = router;
