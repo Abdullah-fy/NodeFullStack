@@ -2,5 +2,4 @@
 
 ## v0.2 have authontication
 
-updata3
-upate
+update 
