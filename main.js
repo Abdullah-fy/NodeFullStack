@@ -11,11 +11,10 @@ const userRoutes = require('./routes/user.route');
 const app = express();
 const PORT = APP_CONFIG.PORT || 3000;
 
-
 app.use(cors()); // Enable CORS
 app.use(express.json());
 //add your rout here......................
-app.use("/api/cart", cartRoutes);
+app.use("/cart", cartRoutes);
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 
