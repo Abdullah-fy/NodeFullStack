@@ -63,9 +63,23 @@ async function deleteUser(id) {
   }
 }
 
+
+// Get all users
+async function getAllUsers() {
+  try {
+    const users = await User.find(); // Fetch all users from the database
+    console.log('All users fetched:', users);
+    return users;
+  } catch (error) {
+    console.error('Error fetching all users:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   createUser,
   getUserByEmail,
   updateUser,
-  deleteUser
+  deleteUser,
+  getAllUsers
 };

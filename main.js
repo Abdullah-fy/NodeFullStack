@@ -5,18 +5,18 @@ const { connectToDataBase } = require("./database/mongo/index");
 const { APP_CONFIG } = require("./config/app.config");
 const cartRoutes = require("./routes/cart.routes");
 const { authenticateToken } = require('./middlewares/authontication.middleware');
-
+const authRoutes = require('./routes/auth.route');
+const userRoutes = require('./routes/user.route');
 
 const app = express();
 const PORT = APP_CONFIG.PORT || 3000;
 
-
-
-
 app.use(cors()); // Enable CORS
 app.use(express.json());
 //add your rout here......................
-app.use("/api/cart", cartRoutes);
+app.use("/cart", cartRoutes);
+app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
 
 // Connect to Database and Start Server
 (async function () {
