@@ -58,6 +58,7 @@ async function deleteUserController(req, res) {
   }
 }
 
+
 // Get all users
 async function getAllUsersController(req, res) {
   try {
@@ -92,6 +93,7 @@ module.exports = {
   createUserController,
   getUserByEmailController,
   updateUserController,
+
   deleteUserController,
   getAllUsersController,
   UpdateisActiveStatusController

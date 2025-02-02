@@ -63,6 +63,7 @@ async function deleteUser(id) {
   }
 }
 
+
 // Get all users
 async function getAllUsers() {
   try {
