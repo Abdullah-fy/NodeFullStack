@@ -8,10 +8,10 @@ router.post('/add',CartController.addToCart);
 //get cart by customer id
 router.get('/:customerId',CartController.getCart);
 //Remove item from cart
-router.delete('/remove/:customerId/:productId', CartController.removeFromCart);
+router.delete('/remove', CartController.removeFromCart);
 //decrese item from cart 
-router.post('/dec',CartController.decfromToCart);
+router.patch('/dec',CartController.decfromToCart);
 //clear cart
-router.delete('/clear/:customerId',CartController.clearCart);
+router.delete('/clear',CartController.clearCart);
 
 module.exports=router;

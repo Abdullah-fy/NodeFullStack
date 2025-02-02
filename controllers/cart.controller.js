@@ -38,7 +38,7 @@ class CartController {
     //3-Remove item from cart
     static async removeFromCart(req,res){
         try {
-            const{customerId,productId}=req.params;
+            const{customerId,productId}=req.body;
             
             //validate input
             if(!customerId || !productId){
@@ -73,7 +73,7 @@ class CartController {
     //5-clear cart
     static async clearCart(req, res) {
         try {
-            const { customerId } = req.params;
+            const { customerId } = req.body;
             //validate input
             if (!customerId) {
                 return res.status(400).json({message:'customer Id is req'})

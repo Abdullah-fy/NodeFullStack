@@ -16,7 +16,7 @@ const PORT = APP_CONFIG.PORT || 3000;
 app.use(cors()); // Enable CORS
 app.use(express.json());
 //add your rout here......................
-app.use("/api/cart", cartRoutes);
+app.use("/cart", cartRoutes);
 
 // Connect to Database and Start Server
 (async function () {
