@@ -15,4 +15,4 @@ router.patch('/dec',CartController.decfromToCart);
 router.delete('/clear',CartController.clearCart);
 
 
-module.exports=router;
+module.exports=router; 
