@@ -8,7 +8,8 @@ const CartSchema = new Schema({
       productId: { type: String, ref: 'Product', required: true },
       sellerId: { type: String, ref: 'User', required: true }, 
       quantity: { type: Number, required: true, min: 1 },
-      price:{ type: Number, required: true, min: 0 }
+      price:{ type: Number, required: true, min: 0 },
+      isAvailable: { type: Boolean, default: true },
     }
   ],
   totalAmount: { type: Number, required: true },
