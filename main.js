@@ -7,6 +7,9 @@ const cartRoutes = require("./routes/cart.routes");
 const { authenticateToken } = require('./middlewares/authontication.middleware');
 const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
+const slellerRoutes=require ('./routes/seller.routes');
+const fileUpload = require("express-fileupload");
+
 
 const app = express();
 const PORT = APP_CONFIG.PORT || 3000;
@@ -17,7 +20,18 @@ app.use(express.json());
 app.use("/cart", cartRoutes);
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
+app.use('/seller',slellerRoutes);
 
+app.use(
+  fileUpload({
+    useTempFiles: false,
+    tempFileDir: "/tmp/", 
+    limits: { fileSize: 50 * 1024 * 1024 },
+    createParentPath: true, 
+    safeFileNames: true, 
+    preserveExtension: true, 
+  })
+);
 // Connect to Database and Start Server
 (async function () {
   try {
