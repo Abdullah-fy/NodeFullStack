@@ -3,6 +3,7 @@ const CartRepo = require('../repos/cart.repo');
 const Product = require('../models/product.model');
 const CartService=require('./cart.service')
 const { Error } = require('mongoose');
+const Order = require('../models/order.model');
 
 class OrderService{
     //1-create order
@@ -54,8 +55,17 @@ class OrderService{
     }
 
     //2-Get all order (admin)
-    
+     static async findAllorder(options){
+        try{
+        return await orderRepo.findAllOrder(options);
+        }catch(error)
+        {
+            throw new Error(`Failed to fetch orders: ${error.message}`)
+        }
+
+     }
     //3-get all customer order =>(customer order history)
+    
     //4-update order 
     //5-change order item status
 

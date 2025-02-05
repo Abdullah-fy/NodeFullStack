@@ -6,7 +6,11 @@ class orderRepo {
         try {
 
             if (isNaN(page) || isNaN(limit) || page < 1 || limit < 1 || limit > 100) {
-                throw new Error('Invalid pagination parameters');
+                throw new Error('Invalid filter parameters');
+            }
+
+            if (!['asc', 'desc'].includes(sortedOrder.toLowerCase())) {
+                throw new Error("Invalid sortedOrder value. Use 'asc' or 'desc'.");
             }
 
             const skip = (page - 1) * limit;
@@ -68,36 +72,35 @@ class orderRepo {
     }
 
     //5-get order by sellerId ==> for seller
-    static async findOrderBySellerId(sellerId)
-    {
-        try{
-            const orders =await Order.find({'items.sellerId':sellerId});
+    static async findOrderBySellerId(sellerId) {
+        try {
+            const orders = await Order.find({ 'items.sellerId': sellerId });
             return orders
-        }catch(error){
+        } catch (error) {
             throw new Error('Error finding orders by sellerId');
         }
     }
 
     //6-update item statues
-    static async updateItemStatus(orderId,productId,newStatus){
-        try{
-            const order =await Order.findById(orderId);
-            if(!order){
+    static async updateItemStatus(orderId, productId, newStatus) {
+        try {
+            const order = await Order.findById(orderId);
+            if (!order) {
                 throw new Error('Order not Found');
             }
             const item = order.items.find(i => i.productId === productId);
-            if(!item){
+            if (!item) {
                 throw new Error('Item not found')
             }
-            item.itemStatus=newStatus;
+            item.itemStatus = newStatus;
             await order.save();
 
             return order
-        }catch(error){
+        } catch (error) {
             throw new Error(`Error updating item status: ${error.message}`);
         }
     }
 
 }
 
-module.exports=orderRepo;
+module.exports = orderRepo;

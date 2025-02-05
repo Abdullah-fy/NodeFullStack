@@ -1,3 +1,4 @@
+const OrderService = require('../services/order.service');
 const orderService = require('../services/order.service');
 
 
@@ -21,6 +22,27 @@ class orderController {
         }
 
     }
+
+    //2-get all order by filter
+    static async getAllOrders(req,res){
+        try{
+            const{page,limit,sortBy,sortedOrder,...filters}=req.query;
+
+            const orders=await OrderService.findAllorder({
+                page,
+                limit,
+                sortBy,
+                sortedOrder,
+                filter:filters,
+            });
+
+            return res.status(200).json(orders);
+        }catch(error){
+            return res.status(500).json({ message: error.message });
+        }
+    }
 }
+
+
 
 module.exports = orderController;
