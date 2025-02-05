@@ -1,7 +1,7 @@
 const Order = require('../models/order.model');
 
 class orderRepo {
-    //1-find all ==> for admin
+    //1-find all ==> for admin 
     static async findAllOrder({ page = 1, limit = 10, sortBy = "createdAt", sortedOrder = "desc", filter = {} } = {}) {
         try {
 
@@ -44,7 +44,7 @@ class orderRepo {
         }
     }
 
-    //3-Create new Order
+    //3-Create new Order 
     static async createOrder(orderData) {
         try {
             const order = new Order(orderData);
