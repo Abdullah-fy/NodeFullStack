@@ -64,8 +64,34 @@ class OrderService{
         }
 
      }
+
     //3-get all customer order =>(customer order history)
-    
+    static async getOrdersByCustomerId(customerId){
+        try{
+            return await orderRepo.findOrderByCustomerId(customerId)
+        }catch(error){
+            throw new Error(`Failed to fetch customer orders: ${error.message}`);
+        }
+    }
+
+    //4-get orders by sellerid ==> for seller
+    static async getOrdersbySellerId(sellerId){
+        try{
+            const orders=await orderRepo.findOrderBySellerId(sellerId);
+
+            //return only item that belong to that seller
+            const filtereOrders= orders.map(order => {
+                const sellerItems = order.items.filter(item => item.sellerId === sellerId);
+                return { ...order.toObject(), items: sellerItems };
+            })
+            return filtereOrders;
+        }
+        catch(error){
+            throw new Error(`Failed to fetch customer orders: ${error.message}`)
+        }
+    }
+
+
     //4-update order 
     //5-change order item status
 
