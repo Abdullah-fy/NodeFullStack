@@ -3,15 +3,17 @@ const { Schema, Types } = mongoose;
 
 const OrderSchema = new Schema({
   customerId: { type: String, ref: 'User', required: true },
+  PhoneNumber:{type:Number,require:true},
   items: [
     {
       productId: { type: String, ref: 'Product', required: true },
       sellerId: { type: String, ref: 'User', required: true }, ////////// Ref to Seller (تعديل هنا)
       quantity: { type: Number, required: true },
       price: { type: Number, required: true }, 
+      isAvailable: { type: Boolean, default: true },
       itemStatus: {
         type: String,
-        enum: ['pending', 'approved'],
+        enum: ['rejected','pending', 'approved'],
         default: 'pending',
         required: true
       }
@@ -24,12 +26,6 @@ const OrderSchema = new Schema({
       enum: ['credit_card', 'debit_card', 'paypal', 'bank_transfer', 'cash_on_delivery'],
       required: true
     },
-    status: {
-      type: String,
-      enum: ['pending', 'processing', 'shipped', 'canceled'],
-      default: 'pending',
-      required: true
-    },
     shippingAddress: { type: String, required: true },
     paymentStatus: {
       type: String,
@@ -37,7 +33,14 @@ const OrderSchema = new Schema({
       default: 'pending',
       required: true
     }
-  }
+  },
+  Orderstatus: {
+    type: String,
+    enum: ['pending', 'processing', 'shipped', 'canceled'],
+    default: 'pending',
+    required: true
+  },
+
 }, { timestamps: true }); 
 const Order = mongoose.model("Order", OrderSchema);
 module.exports = Order;

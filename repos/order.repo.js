@@ -46,7 +46,7 @@ class orderRepo {
             const order = new Order(orderData);
             return await order.save();
         } catch (error) {
-            throw new Error('Error placing order. Please try again later')
+            throw new Error(`Error placing order. Please try again later ${error.message}`)
         }
     }
 
@@ -99,3 +99,5 @@ class orderRepo {
     }
 
 }
+
+module.exports=orderRepo;

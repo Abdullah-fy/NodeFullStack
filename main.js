@@ -8,6 +8,7 @@ const { authenticateToken } = require('./middlewares/authontication.middleware')
 const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
 const slellerRoutes=require ('./routes/seller.routes');
+const orderRoutes=require ('./routes/order.routes');
 const fileUpload = require("express-fileupload");
 
 
@@ -21,6 +22,7 @@ app.use("/cart", cartRoutes);
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/seller',slellerRoutes);
+app.use('/order',orderRoutes);
 
 app.use(
   fileUpload({
