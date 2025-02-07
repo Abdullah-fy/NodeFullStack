@@ -65,7 +65,7 @@ class OrderService {
     //3-get all customer order =>(customer order history)
     static async getOrdersByCustomerId(customerId) {
         try {
-            return orderRepo.findOrderByCustomerId(customerId);   
+            return orderRepo.findOrderByCustomerId(customerId);
         } catch (error) {
             throw new Error(`Failed to fetch customer orders: ${error.message}`);
         }
@@ -88,53 +88,56 @@ class OrderService {
         }
     }
     //4-update order payment
-    static async updatePaymentStatus(orderId,status){
-        try{
-            const order =orderRepo.updatepayment(orderId,status);
+    static async updatePaymentStatus(orderId, status) {
+        try {
+            const order = await orderRepo.updatepayment(orderId, status);
+            await orderRepo.changeOrderStatues(orderId);
             return order;
-        }catch(error){
+        } catch (error) {
             throw new Error(`Faild to updated payment status ${error.message}`);
         }
     }
     //5-change order item status
-    static async updateItem(orderId,productId,statues){
-        try{
+    static async updateItem(orderId, productId, statues) {
+        try {
+            const order = await orderRepo.getOrderById(orderId);
            
-            const order = await orderRepo.updateItemStatus(orderId,productId,statues);
-            
-            if(statues === "rejected")
-            {
+
+            if (statues === "rejected") {
                 //find item in order 
-                const item = order.items.find(item=>item.productId === productId);
-                if(item){
+                const item = order.items.find(item => item.productId === productId);
+                if (item) {
                     //handel mouney
-                    order.paymentDetails.totalAmount -= item.price * item.quantity;
-                    order.paymentDetails.theRest += item.price * item.quantity;
+                    if (item.itemStatus !== "rejected") {
+                        order.paymentDetails.totalAmount -= item.price * item.quantity;
+                        order.paymentDetails.theRest += item.price * item.quantity;
+                        //add back stockquantity
+                    }
+                    
                 }
-                
+
                 //handel order 
-                if(order.paymentDetails.totalAmount === 0)
-                {
-                    order.Orderstatus="canceled";
-                    if(order.paymentDetails.paymentStatus === "pending")
-                    {order.paymentDetails.paymentStatus="failed"}
+                if (order.paymentDetails.totalAmount === 0) {
+                    order.Orderstatus = "canceled";
+                    if (order.paymentDetails.paymentStatus === "pending") { order.paymentDetails.paymentStatus = "failed" }
                 }
 
                 //handel payment statued
-                if(order.paymentDetails.paymentStatus==="paid")
-                {
-                    order.paymentDetails.paymentStatus="restoration";
+                if (order.paymentDetails.paymentStatus === "paid") {
+                    order.paymentDetails.paymentStatus = "restoration";
                 }
 
                 //save
                 await order.save();
-                
+
             }
-            return order;
-        }catch(error){
+            await orderRepo.changeOrderStatues(orderId);
+            return await orderRepo.updateItemStatus(orderId, productId, statues);;
+        } catch (error) {
             throw new Error(`Faild to update item statues ${error.message}`);
         }
     }
+
 
 }
 

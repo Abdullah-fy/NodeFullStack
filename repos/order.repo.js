@@ -113,6 +113,26 @@ class orderRepo {
         }
     }
 
+    //change order statues
+    static async changeOrderStatues(orderId){
+        try {
+            const order=await Order.findById(orderId);
+            //check items
+            let allAproved = true;
+                order.items.forEach(item => {
+                    if (item.itemStatus == "pending") {
+                        allAproved = false;
+                    }
+                });
+            if(order.paymentDetails.paymentStatus==='paid' && order.Orderstatus !== "canceled"){
+                order.Orderstatus="shipped";
+                await order.save();
+            }
+        } catch (error) {
+            throw new Error(`Failed to change order staues ${error.message}`)
+        }
+    }
+
 }
 
 module.exports = orderRepo;
