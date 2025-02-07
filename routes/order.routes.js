@@ -15,7 +15,10 @@ router.get("/getAllOrders",orderController.getAllOrders)
 router.get("/getOrders/:customerId",orderController.getOrdersByCustomerId);
 //4-get orders by sellerId
 router.get("/getSellerOrders/:sellerId",orderController.getOrdersBySellerId);
-
+//5-updatepatment status ==>cahier
+router.patch("/updatepayment",orderController.updatePaymentStatus);
+//6-update item in order =>seller and clerk 
+router.patch('/update-item',orderController.updateItemStatus);
 
 
 

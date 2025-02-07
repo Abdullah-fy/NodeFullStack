@@ -12,7 +12,7 @@ class orderController {
             };
 
             //call service
-            const order = await orderService.createOrder(customerId, PhoneNumber, paymentMethod, shippingAddress);
+            const order = await OrderService.createOrder(customerId, PhoneNumber, paymentMethod, shippingAddress);
 
             return res.status(201).json(order);
         } catch (error) {
@@ -60,7 +60,7 @@ class orderController {
     static async getOrdersBySellerId(req,res){
         try{
             const{sellerId}=req.params;
-            const orders=await orderService.getOrdersbySellerId(sellerId);
+            const orders=await OrderService.getOrdersbySellerId(sellerId);
 
             if(!orders.length){
                 return res.status(404).json({message:"No orders found"});
@@ -68,6 +68,29 @@ class orderController {
             return res.status(200).json(orders);
         }catch(error){
             return res.status(500).json({ message: error.message });
+        }
+    }
+
+    //5-update payment status
+    static async updatePaymentStatus(req,res){
+        try{
+            const{orderId,newStatus}=req.body;
+            const order = await OrderService.updatePaymentStatus(orderId,newStatus);
+
+            return res.status(201).json(order);
+        }catch(error){
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+    //6-update item statues
+    static async updateItemStatus(req,res){
+        try {
+            const{orderId,productId,newStatus}=req.body;
+            const order=await OrderService.updateItem(orderId,productId,newStatus);
+            return res.status(201).json(order);
+        } catch (error) {
+            return res.status(500).json({message : error.message});
         }
     }
 }

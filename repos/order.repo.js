@@ -54,13 +54,14 @@ class orderRepo {
         }
     }
 
-    //4-Update Order
-    static async updateOrder(_id, updateData) {
+    
+    //4-update payment method
+    static async updatepayment(_id, updateData) {
         try {
             const updateOrder = await Order.findByIdAndUpdate(
                 _id,
-                { $set: updateData },
-                { new: true },
+                { $set: { "paymentDetails.paymentStatus": updateData } }, 
+                { new: true }
             );
             if (!updateOrder) {
                 throw new Error("Order not found");
@@ -70,6 +71,7 @@ class orderRepo {
             throw new Error("order not found")
         }
     }
+
 
     //5-get order by sellerId ==> for seller
     static async findOrderBySellerId(sellerId) {
@@ -94,10 +96,20 @@ class orderRepo {
             }
             item.itemStatus = newStatus;
             await order.save();
-
-            return order
+            return order;
+            
         } catch (error) {
             throw new Error(`Error updating item status: ${error.message}`);
+        }
+    }
+
+    //7-getorderbyid
+    static async getOrderById(orderId){
+        try {
+            const order = Order.findById(orderId);
+            return order;
+        } catch (error) {
+            throw new Error(`Error finding order ${error.message}`)
         }
     }
 
