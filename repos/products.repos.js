@@ -85,7 +85,7 @@ const getFilteredProducts = async({category, minPrice, maxPrice, searchInput}) =
        
       }
     }
-
+    
     //excute query
     const products = await productsCollection.find(query);
     console.log("filtered products: ", products);

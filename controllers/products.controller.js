@@ -77,7 +77,7 @@ class SellerProductsController{
            if(maxPrice) {
             filter.price = {...filter.price, $lte: Number(maxPrice)};
            }
-
+           
            const products = await getFilteredProductsServices(filter);
            res.json(products);
         }
