@@ -1,6 +1,4 @@
 const OrderService = require('../services/order.service');
-const orderService = require('../services/order.service');
-
 
 class orderController {
     //1-create order
@@ -22,7 +20,7 @@ class orderController {
         }
 
     }
-
+ 
     //2-get all order by filter
     static async getAllOrders(req,res){
         try{

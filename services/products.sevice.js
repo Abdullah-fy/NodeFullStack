@@ -1,7 +1,7 @@
-const {getProducts,AddProduct,DeleteProduct,UpdateProduct,getById}=require ('../repos/products.repos');
+const {getProducts, AddProduct, DeleteProduct, UpdateProduct, getById, getFilteredProducts}=require ('../repos/products.repos');
 const {upload} =require ('./media.service');
 const mongoose=require ('mongoose');
-
+const Product = require('../models/product.model');
 
 const GetUproducts=async ()=>{
     console.log("Inside getproducts service");
@@ -27,7 +27,7 @@ const CreateProduct = async (req) => {
     : [req.files.images];
 
     const imageUrls = await upload(imagesArray);
-    //const productId = new mongoose.Types.ObjectId();
+    const productId = new mongoose.Types.ObjectId();
 
     const productData = {
         _id: req.body.id,
@@ -62,11 +62,23 @@ const updateProduct=async(id, data)=>{
     return updatedproduct;
 };
 
+//fetch filtered products
+const getFilteredProductsServices = async (filter) => {
+    try {
+        const products = await Product.find(filter);
+        return products;
+    }
+    catch(error) {
+        console.log('error in get filtered products: ', error);
+    }
+}
+
 module.exports={
     GetUproducts,
     CreateProduct,
     deleteProduct,
     updateProduct,
-    GetProductById
+    GetProductById,
+    getFilteredProductsServices
 };
 

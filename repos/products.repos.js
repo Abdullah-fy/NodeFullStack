@@ -1,8 +1,4 @@
 const Product =require('../models/product.model');
-const mongoose=require ('mongoose');
-const {upload}=require('../services/media.service');
-
-
 
 const getProducts= async()=>{
     try{
@@ -21,8 +17,6 @@ const getProducts= async()=>{
 const getById = async (id) => {
   return await Product.findById(id);
 };
-
-
 
 const AddProduct=async (productData) =>{
   console.log("start of add product ");
@@ -67,10 +61,50 @@ const UpdateProduct=async(id,ProductData)=>{
     }
 }
 
+//fetch filtered products
+const getFilteredProducts = async({category, minPrice, maxPrice, searchInput}) => {
+  try {
+    const productsCollection = db.collection('products');
+    const query = {};
+
+    //filter by category
+    if(category) {
+      query.category = category;
+  
+    }
+
+    //filter by price
+    if(minPrice !== undefined || maxPrice !== undefined) {
+      query.price = {};
+      if(minPrice !== undefined) {
+          query.price.$gte = parseFloat(minPrice); // to ensure price is a number
+       
+      }
+      if(maxPrice !== undefined) {
+          query.price.$lte = parseFloat(maxPrice);
+       
+      }
+    }
+
+    //excute query
+    const products = await productsCollection.find(query);
+    console.log("filtered products: ", products);
+    if(products) {
+      return products; 
+    }
+
+  }
+  catch(error) {
+    console.log('error in get filtered products: ', error);
+    throw error;
+  }
+}
+
 module.exports={
     getProducts,
     AddProduct,
     DeleteProduct,
     UpdateProduct,
-    getById
+    getById,
+    getFilteredProducts
 };

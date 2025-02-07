@@ -8,6 +8,7 @@ router.put('/products/:id',SellerProductsController.updateAProduct);
 router.post('/products',SellerProductsController.AddProduct);
 router.delete('/products/:id',SellerProductsController.DeleteProduct);
 router.get('/products/:id',SellerProductsController.GetProductByID); //check seller id 
+router.get('/filteredProducts', SellerProductsController.getFilteredProducts);
 
 
 module.exports=router;

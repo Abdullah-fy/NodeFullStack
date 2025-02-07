@@ -1,7 +1,4 @@
-const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById} =require('../services/products.sevice');
-
-
-
+const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById, getFilteredProductsServices} =require('../services/products.sevice');
 
 class SellerProductsController{
     static async getAllProducts(req,res,next){
@@ -50,7 +47,7 @@ class SellerProductsController{
         }
     };
 
-    static async GetProductByID(req,res){
+     static async GetProductByID(req,res){
         try{
             const {id}=req.params;
             const product=await GetProductById(id);
@@ -63,6 +60,32 @@ class SellerProductsController{
             res.status(500).json({ message: 'Server error', error: error.message });
         }
     };
+
+    static async getFilteredProducts(req, res) {
+        try {
+            const {category, minPrice, maxPrice, search} = req.query;
+            const filter = {};
+
+           if(category) {
+            filter.category = category;
+           }
+
+           if(minPrice) {
+            filter.price = {...filter.price, $gte: Number(minPrice)};
+           }
+
+           if(maxPrice) {
+            filter.price = {...filter.price, $lte: Number(maxPrice)};
+           }
+
+           const products = await getFilteredProductsServices(filter);
+           res.json(products);
+        }
+        catch(error) {
+            console.log('error in get filtered products: ', error);
+            res.status(500).json({message: 'internal server error'});
+        }
+    }
 }
 
 module.exports=SellerProductsController;

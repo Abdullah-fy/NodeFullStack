@@ -16,7 +16,8 @@ const app = express();
 const PORT = APP_CONFIG.PORT || 3000;
 
 app.use(cors()); // Enable CORS
-app.use(express.json());
+app.use(express.json()); // middleware
+
 //add your rout here......................
 app.use("/cart", cartRoutes);
 app.use('/auth', authRoutes);
