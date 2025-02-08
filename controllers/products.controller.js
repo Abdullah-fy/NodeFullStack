@@ -1,5 +1,5 @@
 const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById, getFilteredProductsServices} =require('../services/products.sevice');
-
+const Product = require('../models/product.model')
 class SellerProductsController{
     static async getAllProducts(req,res,next){
         console.log("Before calling products.service getprods");
@@ -62,29 +62,36 @@ class SellerProductsController{
     };
 
     static async getFilteredProducts(req, res) {
+       
         try {
-            const {category, minPrice, maxPrice, search} = req.query;
-            const filter = {};
-
-           if(category) {
-            filter.category = category;
-           }
-
-           if(minPrice) {
-            filter.price = {...filter.price, $gte: Number(minPrice)};
-           }
-
-           if(maxPrice) {
-            filter.price = {...filter.price, $lte: Number(maxPrice)};
-           }
-           
-           const products = await getFilteredProductsServices(filter);
-           res.json(products);
+            const { search, category, minPrice, maxPrice } = req.query;
+            // console.log("received filters:", req.query); 
+        
+            let filter = {}; 
+        
+            if (search) {
+                filter.name = { $regex: search, $options: "i" }; 
+            }
+            if (category) {
+                filter.category = category;
+            }
+            if (minPrice || maxPrice) {
+                filter.price = {};
+                if (minPrice) filter.price.$gte = Number(minPrice);
+                if (maxPrice) filter.price.$lte = Number(maxPrice);
+            }
+        
+            let products = await Product.find(filter); 
+        
+            // console.log("filtered products:", products); 
+            res.json(products); 
+        } 
+        catch (error) {
+            console.error("error fetching filtered products:", error);
+            res.status(500).json({ message: "Server error" });
         }
-        catch(error) {
-            console.log('error in get filtered products: ', error);
-            res.status(500).json({message: 'internal server error'});
-        }
+        
+        
     }
 }
 
