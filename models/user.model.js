@@ -34,9 +34,9 @@ const UserSchema = new mongoose.Schema({
       type: Boolean,
       default: true,
       select: false
-    }
+    },
     // isAcrive:[0,1] //in case seller or delete also
-    // isActive: { type: Boolean, default: true } /////////////////////////////take a look here
+    isActive: { type: Boolean, default: true } /////////////////////////////take a look here
   }
   );
 
