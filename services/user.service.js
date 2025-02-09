@@ -1,4 +1,5 @@
 const User = require('../models/user.model'); // Import the User model
+const {DeleteAllproductsSeller}=require('./products.sevice')
 const mongoose = require('mongoose');
 
 async function createUser(firstName, lastName, email, password, role) {
@@ -85,6 +86,9 @@ async function UpdateisActiveStatus(email,Status) {
     if(user.isActive!=Status){
       user.isActive=Status;
       await User.updateOne({ email }, { $set: { isActive: Status } });
+      if(user.isActive==false){
+        DeleteAllproductsSeller(id);
+      }
       return { success: true, message: "Status updated successfully" };
 
     }else {
@@ -105,5 +109,5 @@ module.exports = {
   updateUser,
   deleteUser,
   getAllUsers,
-  UpdateisActiveStatus
+  UpdateisActiveStatus,
 };

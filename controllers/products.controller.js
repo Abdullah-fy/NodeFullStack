@@ -1,4 +1,4 @@
-const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById, getFilteredProductsServices} =require('../services/products.sevice');
+const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById, getFilteredProductsServices,getAllProductUnactive,SoftDeleteProduct,DeleteAllproductsSeller} =require('../services/products.sevice');
 const Product = require('../models/product.model')
 class SellerProductsController{
     static async getAllProducts(req,res,next){
@@ -93,6 +93,40 @@ class SellerProductsController{
         
         
     }
+
+    static async ProductsUnActive(req,res){
+        try{
+             const Products =getAllProductUnactive();
+             res.status(200).json(Products)
+        }catch(error){
+            res.status(500).json({message:error.message})
+        }
+
+    }
+    static async SoftDeleteProduct(req,res){
+        try{
+
+            const id=req.params.id;
+            if(SoftDeleteProduct(id)){
+                res.status(200).json({message:`Product with id :${id} deleted successfully`})
+            }
+        }catch(error){
+            res.status(500).json({message:error.message});
+        }
+
+    }
+    static async DeleteAllProductsSeller(req,res){
+        try{
+        const seller_id=req.params.seller_id;
+        if(DeleteAllproductsSeller(seller_id)){
+            res.status(200).Json({message:`All products for this Seller Deleted Successfully`})
+        }
+    }catch(error){
+        res.status(500).json({message:error.message});
+    }
+
+    }
+
 }
 
 module.exports=SellerProductsController;
