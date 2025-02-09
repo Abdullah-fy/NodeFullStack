@@ -9,7 +9,7 @@ const ProductSchema = new Schema({
     category: { 
         type: String, 
         required: true, 
-        enum: ['forHer', 'forHim']
+        enum: ['forHer', 'forHim', 'all']
     },
     images: { type: [String], required: true }, // Array of image URLs
     stockQuantity: { type: Number, required: true },
@@ -18,7 +18,7 @@ const ProductSchema = new Schema({
         name: { type: String } 
     },
     isActive: { type: Boolean, default: true },
-}, { timestamps: true });  //////////////////////////////////added time stamp
+}, { timestamps: true });  // added time stamp
 
 
 const Product = mongoose.model("Product", ProductSchema);

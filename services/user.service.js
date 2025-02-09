@@ -9,7 +9,7 @@ async function createUser(firstName, lastName, email, password, role) {
       lastName,
       email,
       password,
-      role
+      role 
     });
     const savedUser = await newUser.save();
     console.log('User created:', savedUser);
