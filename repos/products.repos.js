@@ -100,11 +100,29 @@ const getFilteredProducts = async({category, minPrice, maxPrice, searchInput}) =
   }
 }
 
+const getUnActiveProducts=async ()=>{
+
+  try{
+    const products=await Product.find({isActive:false})||[];
+    if(products!=[]){
+      return products;
+    }else{
+      throw new Error("No Available Products");
+    }
+
+  }catch(error){
+    throw new Error("Fail in get Products");
+  }
+  
+
+}
+
 module.exports={
     getProducts,
     AddProduct,
     DeleteProduct,
     UpdateProduct,
     getById,
-    getFilteredProducts
+    getFilteredProducts,
+    getUnActiveProducts
 };

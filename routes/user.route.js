@@ -10,4 +10,5 @@ router.delete('/:id', userController.deleteUserController);
 router.delete('/:email', userController.UpdateisActiveStatusController);
 
 
+
 module.exports = router;

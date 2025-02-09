@@ -1,4 +1,4 @@
-const {getProducts, AddProduct, DeleteProduct, UpdateProduct, getById, getFilteredProducts}=require ('../repos/products.repos');
+const {getProducts, AddProduct, DeleteProduct, UpdateProduct, getById, getFilteredProducts,getUnActiveProducts}=require ('../repos/products.repos');
 const {upload} =require ('./media.service');
 const mongoose=require ('mongoose');
 const Product = require('../models/product.model');
@@ -73,12 +73,50 @@ const getFilteredProductsServices = async (filter) => {
     }
 }
 
+const getAllProductUnactive=async ()=>{
+    try{
+        const AllProducts= getUnActiveProducts();
+        return AllProducts;
+    }catch(error){
+            throw new Error(error);
+    }
+   
+}
+const SoftDeleteProduct=async (id)=>{
+    try{
+      const productTodelete= await  Product.findByIdAndUpdate(
+            id,
+            { isActive: false }, 
+            { new: true }  
+        )
+        if(!productTodelete){
+            throw new Error(`couldnt find product with id :${id}`)
+        }
+        return true;
+    }catch(error){
+        throw new Error("Fialed To Update Product ")
+    }
+}
+const DeleteAllproductsSeller=async (seller_id)=>{
+    try{
+        const DeletedProducts=await Product.updateMany({"sellerinfo.id":seller_id}, {$set: { isActive: false }});
+        if(DeletedProducts.modifiedCount==0){
+            throw new Error("no  any Products deleted for this Seller")
+        }
+        return {success:true ,message :"Products Deleted Successfuly"};
+    }catch(error){
+        throw new Error("couldnt connct to DB Server ");
+    }
+}
 module.exports={
     GetUproducts,
     CreateProduct,
     deleteProduct,
     updateProduct,
     GetProductById,
-    getFilteredProductsServices
+    getFilteredProductsServices,
+    getAllProductUnactive,
+    SoftDeleteProduct,
+    DeleteAllproductsSeller
 };
 
