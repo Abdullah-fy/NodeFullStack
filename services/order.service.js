@@ -7,7 +7,7 @@ const Order = require('../models/order.model');
 
 class OrderService {
     //1-create order
-    static async createOrder(customerId, PhoneNumber, paymentMethod, shippingAddress) {
+    static async createOrder(customerId, PhoneNumber, paymentMethod, shippingAddress,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode) {
         try {
             const cart = await CartRepo.findCartByCustomerId(customerId);
             //1-check again if every nproduct is still avaliable
@@ -32,7 +32,7 @@ class OrderService {
                 customerId,
                 PhoneNumber,
                 items: cart.items,
-                paymentDetails: { totalAmount: cart.totalAmount, paymentMethod, shippingAddress },
+                paymentDetails: { totalAmount: cart.totalAmount, paymentMethod, shippingAddress,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode },
             })
 
             //4-update stock
