@@ -4,15 +4,16 @@ class orderController {
     //1-create order
     static async createOrder(req, res) {
         try {
-            const { customerId, PhoneNumber, paymentMethod, shippingAddress } = req.body;
+            const { customerId, PhoneNumber, paymentMethod, shippingAddress ,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode} = req.body;
 
             //Validate body
-            if (!customerId || !PhoneNumber || !paymentMethod || !shippingAddress) {
-                return res.status(400).json({ message: 'Missing required fields' })
+            if (!customerId || !PhoneNumber || !paymentMethod || !shippingAddress || !CreditCardNumber|| !ExpiryMonth  || !ExpiryYear || !CVVCode) {
+                console.log(customerId, PhoneNumber, paymentMethod, shippingAddress ,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode)
+                return res.status(400).json({ message: `Missing required fieldsssss`})
             };
 
             //call service
-            const order = await OrderService.createOrder(customerId, PhoneNumber, paymentMethod, shippingAddress);
+            const order = await OrderService.createOrder(customerId, PhoneNumber, paymentMethod, shippingAddress,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode);
 
             return res.status(201).json(order);
         } catch (error) {

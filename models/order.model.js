@@ -21,12 +21,16 @@ const OrderSchema = new Schema({
   ],
   paymentDetails: {
     totalAmount: { type: Number, required: true },
-    theRest:{type: Number, required: true ,default:0},
+    theRest:{type: Number,default:0},
     paymentMethod: {
       type: String,
       enum: ['credit_card', 'debit_card', 'paypal', 'bank_transfer', 'cash_on_delivery'],
       required: true
     },
+    CreditCardNumber:{ type: Number, required: true },
+    ExpiryMonth:{type: Number, required: true},
+    ExpiryYear:{type: Number, required: true},
+    CVVCode:{type: Number, required: true},
     shippingAddress: { type: String, required: true },
     paymentStatus: {
       type: String,
