@@ -1,10 +1,11 @@
 const express=require('express');
 const orderController=require('../controllers/order.controller');
+const AuthController=require('../controllers/authController')
 
 const router=express.Router();
 
 //1-placed order
-router.post("/add",orderController.createOrder)
+router.post("/add",AuthController.protect,AuthController.restrictTo("customer"),orderController.createOrder)
 //2-get all orders ==> for admin 
 /*
 need to send
