@@ -8,7 +8,7 @@ router.post('/login',authController.login);
 router.post('/forgetPassword',authController.forgotPassword);
 router.patch('/resetPassword/:token',authController.resetPassword);
 // update the password
-router.patch('/updataMyPassword', authController.protect, authController.updatePassword);
+router.patch('/updataMyPassword', authController.protect,authController.restrictTo('manager') ,authController.updatePassword);
 
 
 module.exports = router;
