@@ -35,10 +35,18 @@ const UserSchema = new mongoose.Schema({
       default: true,
       select: false
     },
-    // isAcrive:[0,1] //in case seller or delete also
-    isActive: { type: Boolean, default: true } /////////////////////////////take a look here
+
+    isActive: { type: Boolean, default: true }
   }
   );
+// handle isActive
+UserSchema.pre('save', function(next){
+  if (this.isActive) {
+     this.isActive=this.role === 'seller' ? false : true;
+  }
+  next();
+});
+
 
 // middleware to hash the password
 UserSchema.pre('save', async function (next) {
