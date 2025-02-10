@@ -10,13 +10,30 @@ const userRoutes = require('./routes/user.route');
 const slellerRoutes=require ('./routes/seller.routes');
 const orderRoutes=require ('./routes/order.routes');
 const fileUpload = require("express-fileupload");
-
+const rateLimit = require("express-rate-limit");
+const helmet = require('helmet');
+const mongoSanatize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 
 const app = express();
 const PORT = APP_CONFIG.PORT || 3000;
+//http headers security
+app.use(helmet());  
+//protect against nosql inject
+app.use(mongoSanatize());
+// protect against html
+app.use(xss());
 
 app.use(cors()); // Enable CORS
 app.use(express.json()); // middleware
+
+// decrease number of trial
+// const limiter = rateLimit({
+//   max: 5,
+//   windowMs: 60*60*1000,
+//   message: "to many requests, please try again after one hour"
+// });
+// app.use('/auth', limiter);
 
 //add your rout here......................
 app.use("/cart", cartRoutes);
