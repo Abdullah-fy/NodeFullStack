@@ -18,6 +18,8 @@ const ProductSchema = new Schema({
         name: { type: String } 
     },
     isActive: { type: Boolean, default: true },
+    isBestSeller: {type: Boolean, default: false},
+    salesCount: {type: Number, default: 0}
 }, { timestamps: true });  // added time stamp
 
 
