@@ -149,10 +149,12 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
   
     // send it to user's email
-    const resetURL = `${req.protocol}://${req.get(
-      'host'
-    )}/api/v1/users/resetPassword/${resetToken}`;
+    // const resetURL = `${req.protocol}://${req.get(
+    //   'host'
+    // )}/api/v1/users/resetPassword/${resetToken}`;
   
+    const resetURL = `http://localhost:4200/reset-password?token=${resetToken}`;
+
     const message = `Forgot your password? Submit a PATCH request with your new password and passwordConfirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
   
     try {
@@ -196,6 +198,11 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     if (!user) {
       return next(new AppError('Token is invalid or has expired', 400));
     }
+
+    if (req.body.password !== req.body.passwordConfirm) {
+      return next(new AppError('Passwords do not match', 400));
+    }
+
     user.password = req.body.password;
     user.passwordConfirm = req.body.passwordConfirm;
     user.passwordResetToken = undefined;
