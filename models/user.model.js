@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema({
      }, // Hashed password
     role: {
       type: String,
-      enum: ['customer', 'seller', 'admin', 'manager', 'cashier', 'salesClerk', 'supplier'],
+      enum: ['customer', 'seller', 'admin', 'manager','supplier'],
       required: true,
       default: 'customer'
     },
