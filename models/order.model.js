@@ -32,12 +32,6 @@ const OrderSchema = new Schema({
     ExpiryYear:{type: Number, required: true},
     CVVCode:{type: Number, required: true},
     shippingAddress: { type: String, required: true },
-    paymentStatus: {
-      type: String,
-      enum: ['pending', 'paid', 'failed','restoration'],
-      default: 'pending',
-      required: true
-    }
   },
   Orderstatus: {
     type: String,
