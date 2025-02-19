@@ -3,15 +3,16 @@ const { Schema, Types } = mongoose;
 
 const InventorySchema = new Schema({
   branchId: { type: Types.ObjectId, required: true }, 
+  branchLocation:{type: String, required: true },
   products: [
     {
-      productId: { type: Types.ObjectId, ref: "Product", required: true },
+      productId: {type: String, ref: "Product", required: true },
       stock: { type: Number, default: 0, min: 0 }, 
     }
   ],
   staff: {
-    cashier: { type: Types.ObjectId, ref: "user" }, 
-    clerk: { type: Types.ObjectId, ref: "user" } 
+    cashier: { type: Types.ObjectId, ref: "staff" }, 
+    clerk: { type: Types.ObjectId, ref: "staff" } 
   },
 }, { timestamps: true }); 
 

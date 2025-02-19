@@ -56,21 +56,21 @@ class orderRepo {
 
     
     //4-update payment method
-    static async updatepayment(_id, updateData) {
-        try {
-            const updateOrder = await Order.findByIdAndUpdate(
-                _id,
-                { $set: { "paymentDetails.paymentStatus": updateData } }, 
-                { new: true }
-            );
-            if (!updateOrder) {
-                throw new Error("Order not found");
-            }
-            return updateOrder
-        } catch (error) {
-            throw new Error("order not found")
-        }
-    }
+    // static async updatepayment(_id, updateData) {
+    //     try {
+    //         const updateOrder = await Order.findByIdAndUpdate(
+    //             _id,
+    //             { $set: { "paymentDetails.paymentStatus": updateData } }, 
+    //             { new: true }
+    //         );
+    //         if (!updateOrder) {
+    //             throw new Error("Order not found");
+    //         }
+    //         return updateOrder
+    //     } catch (error) {
+    //         throw new Error("order not found")
+    //     }
+    // }
 
 
     //5-get order by sellerId ==> for seller
@@ -113,7 +113,7 @@ class orderRepo {
         }
     }
 
-    //change order statues
+    //8-change order statues
     static async changeOrderStatues(orderId){
         try {
             const order=await Order.findById(orderId);
