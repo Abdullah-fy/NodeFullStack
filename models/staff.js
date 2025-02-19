@@ -9,6 +9,7 @@ const StaffSchema = new mongoose.Schema({
     lastName: { type: String, required: [true, 'Last name is required'] },
     email: { type: String, required: true, unique: true, validate: [validator.isEmail, 'Invalid email'] },
     password: { type: String, required: true, minlenght: 8 }, 
+    baranchId:{type: Types.ObjectId, ref:"Inventory" },
     role: {
       type: String,
       enum: ['cashier','clerk'],

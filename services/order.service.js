@@ -4,6 +4,7 @@ const Product = require('../models/product.model');
 const CartService = require('./cart.service')
 const { Error } = require('mongoose');
 const Order = require('../models/order.model');
+const Inventory =require('../models/Inventory')
 
 class OrderService {
     //1-create order
@@ -35,12 +36,36 @@ class OrderService {
                 paymentDetails: { totalAmount: cart.totalAmount, paymentMethod, shippingAddress,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode },
             })
 
-            //4-update stock
+            //4-update in order stock
             for (const item of order.items) {
                 const product = await Product.findById(item.productId);
                 product.stockQuantity -= item.quantity;
                 await product.save();
             }
+
+            //5-update in online branch
+            const inventory=await Inventory.findOne({branchLocation:"online"}); 
+            if(!inventory)
+            {
+                throw new Error("Inventory not found for this branch.");
+            }
+
+            for(const item of order.items)
+            {
+                const product =inventory.products.find(p => String(p.productId) === String(item.productId));
+
+                if(product){
+                    if(product.stock >= item.quantity)
+                    {
+                        product.stock -= item.quantity;
+                    }else{
+                        throw new Error(`Not enough stock for product ${item.productId}`);
+                    }
+                }else{
+                    throw new Error(`Product ${item.productId} not found in inventory`);
+                }
+            }
+            await inventory.save();
 
             //5-clear cart
             await CartService.clearCart(customerId);
@@ -88,15 +113,15 @@ class OrderService {
         }
     }
     //4-update order payment
-    static async updatePaymentStatus(orderId, status) {
-        try {
-            const order = await orderRepo.updatepayment(orderId, status);
-            await orderRepo.changeOrderStatues(orderId);
-            return order;
-        } catch (error) {
-            throw new Error(`Faild to updated payment status ${error.message}`);
-        }
-    }
+    // static async updatePaymentStatus(orderId, status) {
+    //     try {
+    //         const order = await orderRepo.updatepayment(orderId, status);
+    //         await orderRepo.changeOrderStatues(orderId);
+    //         return order;
+    //     } catch (error) {
+    //         throw new Error(`Faild to updated payment status ${error.message}`);
+    //     }
+    // }
     //5-change order item status
     static async updateItem(orderId, productId, statues) {
         try {
@@ -112,20 +137,45 @@ class OrderService {
                         order.paymentDetails.totalAmount -= item.price * item.quantity;
                         order.paymentDetails.theRest += item.price * item.quantity;
                         //add back stockquantity
+
                     }
-                    
                 }
+                //update product stock
+                if (item.itemStatus !== "rejected"){
+                const product = await Product.findById(productId);
+                if(!product){
+                    throw new Error("Product not found")
+                }else{
+                    product.stockQuantity +=item.quantity;
+                    await product.save();
+                }
+
+                //update inventory stock
+                const inventory = await Inventory.findOne({ branchLocation: "online" });
+                if (!inventory) {
+                    throw new Error("Inventory not found for this branch.");
+                }
+                const inventoryItem = inventory.products.find(p => String(p.productId) === String(productId));
+                if(inventoryItem){
+                    inventoryItem.stock += item.quantity;
+                    await inventory.save();
+                }else{
+                    throw new Error(`Product ${productId} not found in inventory`);
+                }
+
+            }
+
 
                 //handel order 
                 if (order.paymentDetails.totalAmount === 0) {
                     order.Orderstatus = "canceled";
-                    if (order.paymentDetails.paymentStatus === "pending") { order.paymentDetails.paymentStatus = "failed" }
+                    // if (order.paymentDetails.paymentStatus === "pending") { order.paymentDetails.paymentStatus = "failed" }
                 }
 
                 //handel payment statued
-                if (order.paymentDetails.paymentStatus === "paid") {
-                    order.paymentDetails.paymentStatus = "restoration";
-                }
+                // if (order.paymentDetails.paymentStatus === "paid") {
+                //     order.paymentDetails.paymentStatus = "restoration";
+                // }
 
                 //save
                 await order.save();
