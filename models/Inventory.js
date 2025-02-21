@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const { Schema, Types } = mongoose;
 
 const InventorySchema = new Schema({
-  branchId: { type: Types.ObjectId, required: true }, 
   branchLocation:{type: String, required: true },
   products: [
     {

@@ -124,10 +124,11 @@ class orderRepo {
                         allAproved = false;
                     }
                 });
-            if(order.paymentDetails.paymentStatus==='paid' && order.Orderstatus !== "canceled"){
+                if(allAproved){
                 order.Orderstatus="shipped";
                 await order.save();
-            }
+                }
+            
         } catch (error) {
             throw new Error(`Failed to change order staues ${error.message}`)
         }

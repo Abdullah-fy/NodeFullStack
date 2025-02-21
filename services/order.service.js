@@ -11,12 +11,17 @@ class OrderService {
     static async createOrder(customerId, PhoneNumber, paymentMethod, shippingAddress,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode) {
         try {
             const cart = await CartRepo.findCartByCustomerId(customerId);
+            const inventory=await Inventory.findOne({branchLocation:"online"}); 
+            if(!inventory)
+            {
+                throw new Error("Inventory not found for this branch.");
+            }
             //1-check again if every nproduct is still avaliable
             const unavailableItems = [];
             for (const item of cart.items) {
-                const product = await Product.findById(item.productId);
+                const product =inventory.products.find(p => String(p.productId) === String(item.productId));;
 
-                if (!product || !product.isActive || product.stockQuantity < item.quantity) {
+                if (!product || product.stock < item.quantity) {
                     item.isAvailable = false;
                     unavailableItems.push(item);
                 } else {
@@ -44,12 +49,6 @@ class OrderService {
             }
 
             //5-update in online branch
-            const inventory=await Inventory.findOne({branchLocation:"online"}); 
-            if(!inventory)
-            {
-                throw new Error("Inventory not found for this branch.");
-            }
-
             for(const item of order.items)
             {
                 const product =inventory.products.find(p => String(p.productId) === String(item.productId));
