@@ -1,20 +1,32 @@
 const CartRepo = require('../repos/cart.repo');
 const Product = require('../models/product.model');
 const { Error } = require('mongoose');
+const Inventory = require('../models/Inventory')
+
 
 class CartService {
     // Add item to cart
     static async addToCart(customerId, productId, quantity) {
         try {
-            // 1. Check if product exists
-            const product = await Product.findById(productId);
+            // 1. Check if product exists in inventory
+            const product=await Product.findById(productId);
             if (!product) {
                 throw new Error('Product not found');
             }
 
+            const inventory = await Inventory.findOne({ branchLocation: "online" });
+            if (!inventory) {
+                throw new Error("Inventory not found for this branch.");
+            }
+
+            const productInInventory  =inventory.products.find(p => String(p.productId) === String(productId));
+            if (!productInInventory) {
+                throw new Error('Product not found in inventory');
+            }
+
             // 2. Check if requested quantity is available in stock
-            if (quantity > product.stockQuantity) {
-                throw new Error(`Requested quantity exceeds available stock. Available stock is: ${product.stockQuantity}`);
+            if (quantity > productInInventory.stock) {
+                throw new Error(`Requested quantity exceeds available stock. Available stock is: ${productInInventory.stock}`);
             }
 
             // 3. Retrieve the cart or create it if it doesn't exist
@@ -37,8 +49,8 @@ class CartService {
 
             if (itemIndex > -1) {
                 // 4.1 If quantity is increased
-                if (cart.items[itemIndex].quantity + quantity > product.stockQuantity) {
-                    throw new Error(`Requested quantity exceeds available stock. Available stock is: ${product.stockQuantity}`);
+                if (cart.items[itemIndex].quantity + quantity > productInInventory.stock) {
+                    throw new Error(`Requested quantity exceeds available stock. Available stock is: ${ productInInventory.stock}`);
                 }
                 cart.items[itemIndex].quantity += quantity;
             }
@@ -106,10 +118,15 @@ class CartService {
                 throw new Error('Cart not found');
             }
             //check if every product is still avaliable
+            const inventory = await Inventory.findOne({ branchLocation: "online" });
+            if (!inventory) {
+                throw new Error("Inventory not found for this branch.");
+            }
             for (const item of cart.items) {
                 const product = await Product.findById(item.productId);
+                const productInInventory  =inventory.products.find(p => String(p.productId) === String(item.productId));
 
-                if (!product || !product.isActive || product.stockQuantity < item.quantity) {
+                if (!product || !product.isActive || productInInventory.stock < item.quantity) {
                     item.isAvailable = false;
                 } else {
                     item.isAvailable = true;
