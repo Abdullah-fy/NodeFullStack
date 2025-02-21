@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
 const slellerRoutes=require ('./routes/seller.routes');
 const orderRoutes=require ('./routes/order.routes');
+const CashierOrderRouted=require('./routes/CashierOrder.routes')
 const fileUpload = require("express-fileupload");
 const rateLimit = require("express-rate-limit");
 const helmet = require('helmet');
@@ -41,6 +42,7 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/seller',slellerRoutes);
 app.use('/order',orderRoutes);
+app.use('/cashier',CashierOrderRouted)
 
 app.use(
   fileUpload({
