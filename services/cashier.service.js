@@ -16,8 +16,7 @@ static async createOrder(CashierId ,paymentMethod,CreditCardNumber,ExpiryMonth,E
         if (!cashier) {
             throw new Error("this cashier not found in staff.");
         }
-        const branchId=cashier.baranchId;
-
+        const branchId=cashier.branchId;
         const inventory = await Inventory.findById(branchId);
         if (!inventory) {
             throw new Error("Inventory not found for this branch.");
