@@ -4,15 +4,15 @@ class cashierOrderController{
     //1-create order
 static async createOrder(req, res) {
     try {
-        const { CasherId, paymentMethod ,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode} = req.body;
+        const { CashierId, paymentMethod ,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode} = req.body;
 
         //Validate body
-        if (!CasherId || !paymentMethod || !CreditCardNumber|| !ExpiryMonth  || !ExpiryYear || !CVVCode) {
+        if (!CashierId || !paymentMethod || !CreditCardNumber|| !ExpiryMonth  || !ExpiryYear || !CVVCode) {
             return res.status(400).json({ message: `Missing required fieldsssss`})
         };
 
         //call service
-        const order = await OrderService.createOrder(CasherId, paymentMethod,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode);
+        const order = await OrderService.createOrder(CashierId, paymentMethod,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode);
 
         return res.status(201).json(order);
     } catch (error) {
@@ -86,6 +86,7 @@ static async getInventory(req,res){
     }
 }
 
+//6-add to cart
 static async addToCart(req,res){
     try {
         const { CasherId, productId, quantity } = req.body;
@@ -96,6 +97,23 @@ static async addToCart(req,res){
         };
 
         const cart = await OrderService.addToCart(CasherId, productId, quantity);
+        res.status(201).json(cart);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+//7-getcart
+static async getcart(req,res){
+    try {
+        const { CasherId} = req.params;
+
+        //Validate body
+        if (!CasherId) {
+            return res.status(400).json({ message: 'Missing required ' })
+        };
+
+        const cart = await OrderService.getCart(CasherId);
         res.status(201).json(cart);
     } catch (error) {
         res.status(500).json({ message: error.message });
