@@ -15,5 +15,7 @@ router.get("/getCashier/:CashierId",orderController.getCashier);
 router.get("/getInventory/:branchId",orderController.getInventory);
 //6-cart depend on general inventory 
 router.post("/addtocart",orderController.addToCart);
+//7-get cart
+router.get("/:CasherId",orderController.getcart)
 
 module.exports=router; 
