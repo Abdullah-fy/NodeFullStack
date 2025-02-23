@@ -1,8 +1,17 @@
-const {getProducts, AddProduct, DeleteProduct, UpdateProduct, getById, getFilteredProducts,getUnActiveProducts}=require ('../repos/products.repos');
+const {getProducts, AddProduct, DeleteProduct, UpdateProduct, getById, getFilteredProducts,getUnActiveProducts, getOnlineProducts}= require ('../repos/products.repos');
+const ProductRepo = require('../repos/products.repos');
 const {upload} =require ('./media.service');
 const mongoose=require ('mongoose');
 const Product = require('../models/product.model');
 const Stock = require('../models/stock.model');
+
+const getOnlineProductsService = async () => {
+    const products = await getOnlineProducts();
+    if (products.error) {
+      throw new Error(products.error);  
+    }
+    return products;
+  };
 
 const GetUproducts=async ()=>{
     console.log("Inside getproducts service");
@@ -129,6 +138,7 @@ module.exports={
     getFilteredProductsServices,
     getAllProductUnactive,
     SoftDeleteProduct,
-    DeleteAllproductsSeller
+    DeleteAllproductsSeller,
+    getOnlineProductsService
 };
 
