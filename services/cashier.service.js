@@ -97,6 +97,150 @@ static async findAllorder(options) {
     }
 
 }
+//4-cashier name by id
+static async findCashier(Casherid){
+    try {
+        const cashier =await orderRepo.cashierdetail(Casherid);
+        return cashier
+    } catch (error) {
+        throw new Error(`Failed to fetch the cashier ${error.message}`)
+    }
+}
+
+//5-products in inventory
+static async findInventory(branchId)
+{
+    try {
+        const inventory=await orderRepo.inventory(branchId);
+        return inventory
+    } catch (error) {
+        throw new Error(`Failed to fetch the inentory ${error.message}`)
+    }
+}
+//6-add to cart
+static async addToCart(CashierId, productId, quantity) {
+    try {
+        // 1. Check if product exists in inventory
+        const cashier=await staff.findById(CashierId);
+        const product=await Product.findById(productId);
+        if(!cashier)
+        {
+            throw new Error(`Cashier does not exist`)
+        }
+        const inventoryId= cashier.branchId
+        const inventory = await Inventory.findById(inventoryId);
+        if (!inventory) {
+            throw new Error(" Inventory not found for this branch.");
+        }
+
+        const productInInventory  =inventory.products.find(p => String(p.productId) === String(productId));
+        if (!productInInventory) {
+            throw new Error('Product not found in inventory');
+        }
+
+        // 2. Check if requested quantity is available in stock
+        if (quantity > productInInventory.stock) {
+            throw new Error(`Requested quantity exceeds available stock. Available stock is: ${productInInventory.stock}`);
+        }
+
+        // 3. Retrieve the cart or create it if it doesn't exist
+        let cart;
+        try {
+            cart = await CartRepo.findCartByCustomerId(CashierId);
+            if (cart === null) {
+                cart = await CartRepo.createCart({
+                    customerId:CashierId,
+                    items: [],
+                    totalAmount: 0,
+                })
+            }
+        } catch (error) {
+            throw new Error("Failed to retrieve or create cart");
+        }
+
+        // 4. Check if the product is already in the cart
+        const itemIndex = cart.items.findIndex(item => item.productId === productId);
+
+        if (itemIndex > -1) {
+            // 4.1 If quantity is increased
+            if (cart.items[itemIndex].quantity + quantity > productInInventory.stock) {
+                throw new Error(`Requested quantity exceeds available stock. Available stock is: ${ productInInventory.stock}`);
+            }
+            cart.items[itemIndex].quantity += quantity;
+        }
+        else {
+            // 4.3 Add new item to the cart
+            cart.items.push({
+                productId,
+                sellerId: product.sellerinfo.id,
+                quantity,
+                price: product.price,
+            });
+        }
+
+        // 5. Update total amount
+        cart.totalAmount = cart.items.reduce((total, item) => total + item.quantity * item.price, 0);
+
+        // 6. Save the updated cart
+        const updatedCart = await CartRepo.updateCart(
+            CashierId, {
+            items: cart.items,
+            totalAmount: cart.totalAmount,
+        });
+
+        return updatedCart;
+    } catch (error) {
+        throw new Error('Error adding item to cart' + error.message);
+    }
+}
+//grt cart
+static async getCart(CashierId) {
+    try {
+        //get cart
+        let cart = await CartRepo.findCartByCustomerId(CashierId);
+        if (!cart) {
+            throw new Error('Cart not found');
+        }
+        //get branchid
+        const cashier=await staff.findById(CashierId);
+        const branchId=cashier.branchId;
+        if(!cashier)
+        {
+            throw new Error('Cashier not found');
+        }
+
+        //check if every product is still avaliable
+        const inventory = await Inventory.findById(branchId);
+        if (!inventory) {
+            throw new Error("Inventory not found for this branch.");
+        }
+        for (const item of cart.items) {
+            const productInInventory  =inventory.products.find(p => String(p.productId) === String(item.productId));
+
+            if (!productInInventory || productInInventory.stock < item.quantity) {
+                item.isAvailable = false;
+            } else {
+                item.isAvailable = true;
+            }
+        }
+
+        //update price
+        cart.totalAmount = cart.items
+            .filter(item => item.isAvailable) // Only include available items
+            .reduce((total, item) => total + item.quantity * item.price, 0);
+
+        //save
+        await CartRepo.updateCart(CashierId, {
+            items: cart.items,
+            totalAmount: cart.totalAmount,
+        });
+
+        return cart;
+
+    } catch (error) {
+        throw new Error(`Error retrieving cart. Please try again later ${error}`);
+    }
+}
 
 }
 

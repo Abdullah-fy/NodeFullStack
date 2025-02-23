@@ -9,5 +9,13 @@ router.post("/add",orderController.createOrder);
 router.get("/getAllOrders",orderController.getAllOrders)
 //3-get order by casherid
 router.get("/getOrders/:CashierId",orderController.getOrdersByCashierId);
+//4-cashier name by id
+router.get("/getCashier/:CashierId",orderController.getCashier);
+//5-product in inventory
+router.get("/getInventory/:branchId",orderController.getInventory);
+//6-cart depend on general inventory 
+router.post("/addtocart",orderController.addToCart);
+//7-get cart
+router.get("/:CasherId",orderController.getcart)
 
 module.exports=router; 

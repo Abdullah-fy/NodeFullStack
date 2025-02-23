@@ -4,15 +4,15 @@ class cashierOrderController{
     //1-create order
 static async createOrder(req, res) {
     try {
-        const { CasherId, paymentMethod ,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode} = req.body;
+        const { CashierId, paymentMethod ,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode} = req.body;
 
         //Validate body
-        if (!CasherId || !paymentMethod || !CreditCardNumber|| !ExpiryMonth  || !ExpiryYear || !CVVCode) {
+        if (!CashierId || !paymentMethod || !CreditCardNumber|| !ExpiryMonth  || !ExpiryYear || !CVVCode) {
             return res.status(400).json({ message: `Missing required fieldsssss`})
         };
 
         //call service
-        const order = await OrderService.createOrder(CasherId, paymentMethod,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode);
+        const order = await OrderService.createOrder(CashierId, paymentMethod,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode);
 
         return res.status(201).json(order);
     } catch (error) {
@@ -53,6 +53,70 @@ static async getOrdersByCashierId(req,res){
         return res.status(200).json(orders);
     }catch(error){
         return res.status(500).json({ message: error.message });
+    }
+}
+
+//4-get cashier
+static async getCashier(req,res){
+    try {
+        const{CashierId}=req.params;
+        const cashier=await OrderService.findCashier(CashierId);
+        if(!cashier)
+        {
+            return res.status(404).json({message:"No Cashier found"});
+        }
+        return res.status(200).json(cashier);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+//5-get inventry
+static async getInventory(req,res){
+    try {
+        const{branchId}=req.params;
+        const inventory=await OrderService.findInventory(branchId);
+        if(!inventory)
+        {
+            return res.status(404).json({message:"No Invcentory found"});
+        }
+        return res.status(200).json(inventory);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+//6-add to cart
+static async addToCart(req,res){
+    try {
+        const { CasherId, productId, quantity } = req.body;
+
+        //Validate body
+        if (!CasherId || !productId || !quantity) {
+            return res.status(400).json({ message: 'Missing required ' })
+        };
+
+        const cart = await OrderService.addToCart(CasherId, productId, quantity);
+        res.status(201).json(cart);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+//7-getcart
+static async getcart(req,res){
+    try {
+        const { CasherId} = req.params;
+
+        //Validate body
+        if (!CasherId) {
+            return res.status(400).json({ message: 'Missing required ' })
+        };
+
+        const cart = await OrderService.getCart(CasherId);
+        res.status(201).json(cart);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 }
 }

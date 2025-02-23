@@ -6,9 +6,6 @@ const validator = require('validator');
 
 
 const StaffSchema = new mongoose.Schema({
-    _id: { 
-      type: mongoose.Schema.Types.ObjectId, auto: true
-  },
     firstName: { type: String, required: [true, 'First name is required'] },
     lastName: { type: String, required: [true, 'Last name is required'] },
     email: { type: String, required: true, unique: true, validate: [validator.isEmail, 'Invalid email'] },
