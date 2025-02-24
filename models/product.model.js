@@ -13,7 +13,6 @@ const ProductSchema = new Schema({
     },
     images: { type: [String], required: true }, // Array of image URLs
     stockQuantity: { type: Number, required: true },
-    stockId: { type: String, ref: 'Stock', required: true },
     sellerinfo: { 
         id: { type: String, ref: 'User' }, 
         name: { type: String } 
