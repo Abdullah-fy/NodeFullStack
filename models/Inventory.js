@@ -6,7 +6,7 @@ const InventorySchema = new Schema({
   products: [
     {
       productId: {type: String, ref: "Product", required: true },
-      stockQuantity: { type: Number, default: 0, min: 0 }, 
+      stock: { type: Number, default: 0, min: 0 }, 
     }
   ],
   staff: {

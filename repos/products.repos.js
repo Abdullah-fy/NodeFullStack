@@ -7,8 +7,9 @@ const getOnlineProducts = async () => {
     
     // populate productId with all fields 
     const inventory = await Inventory.findOne({ branchLocation: "online" })
-      .populate("products.productId") 
-      .exec();
+
+    const invProducts=inventory.products;
+      
 
     console.log("inventory:", inventory);
 
@@ -17,16 +18,12 @@ const getOnlineProducts = async () => {
       return [];
     }
 
-    const onlineProducts = inventory.products
-      .filter((invProduct) => invProduct.stockQuantity > 0 && invProduct.productId)
+    const onlineProducts = invProducts
+      .filter((invProduct) => invProduct.stock > 0 && invProduct.productId)
       .map((invProduct) => ({
-        _id: invProduct.productId._id,
-        name: invProduct.productId.name, 
+        _id: invProduct.productId,
+        stock: invProduct.stock, 
         createdAt: invProduct.productId.createdAt, 
-        stockQuantity: invProduct.stockQuantity, 
-        images: invProduct.productId.images, 
-        isBestSeller: invProduct.productId.isBestSeller, 
-        salesCount: invProduct.productId.salesCount 
       }));
 
     return onlineProducts;
