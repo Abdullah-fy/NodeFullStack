@@ -89,14 +89,14 @@ static async getInventory(req,res){
 //6-add to cart
 static async addToCart(req,res){
     try {
-        const { CasherId, productId, quantity } = req.body;
+        const { CashierId, productId, quantity } = req.body;
 
         //Validate body
-        if (!CasherId || !productId || !quantity) {
+        if (!CashierId || !productId || !quantity) {
             return res.status(400).json({ message: 'Missing required ' })
         };
 
-        const cart = await OrderService.addToCart(CasherId, productId, quantity);
+        const cart = await OrderService.addToCart(CashierId, productId, quantity);
         res.status(201).json(cart);
     } catch (error) {
         res.status(500).json({ message: error.message });
