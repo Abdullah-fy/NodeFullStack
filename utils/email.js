@@ -12,7 +12,7 @@ const sendEmail = async (options) => {
       secure: false,
       auth: {
           user: "8559ca001@smtp-brevo.com",
-          pass: "xsmtpsib-b3f77e21ae60a5fa054c67c1c73ac10fa96166a49cd21c84442850c69e0bb66d-vaNn7z5sR93bVZhw",
+          pass: "xsmtpsib-b3f77e21ae60a5fa054c67c1c73ac10fa96166a49cd21c84442850c69e0bb66d-8F2hLpbWKfsCZmPA",
       },
   });
 
