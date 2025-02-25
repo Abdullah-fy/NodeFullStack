@@ -20,6 +20,10 @@ router.get("/getSellerOrders/:sellerId",orderController.getOrdersBySellerId);
 router.patch("/updatepayment",orderController.updatePaymentStatus);
 //6-update item in order =>seller and clerk 
 router.patch('/update-item',orderController.updateItemStatus);
+//7-get all orders
+router.get("/getAllordersGeneral",orderController.getAllordersGeneral)
+//8-get order by Id
+router.get("/getorderById",orderController.getOrderById)
 
 
 

@@ -94,6 +94,27 @@ class orderController {
             return res.status(500).json({message : error.message});
         }
     }
+
+    static async getAllordersGeneral(req,res){
+        try{
+            const orders= await OrderService.findAllorder();
+            res.status(200).json(orders);
+        }catch(error){
+            res.status(500).json({message:error.message})
+        }
+    }
+
+    static async getOrderById(req,res){
+        try{
+            const id=req.body.id;
+            const order=await OrderService.getOrderById(id);
+            res.status(200).json(order);
+            
+        }catch(error){
+            res.status(500).json({error:error.message})
+
+        }
+    }
 }
 
 

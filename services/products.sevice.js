@@ -105,7 +105,7 @@ const DeleteAllproductsSeller=async (seller_id)=>{
         }
         return {success:true ,message :"Products Deleted Successfuly"};
     }catch(error){
-        throw new Error("couldnt connct to DB Server ");
+        throw new Error("couldnt connect to DB Server ");
     }
 }
 module.exports={

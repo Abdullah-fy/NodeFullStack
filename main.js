@@ -11,10 +11,15 @@ const slellerRoutes=require ('./routes/seller.routes');
 const orderRoutes=require ('./routes/order.routes');
 const CashierOrderRouted=require('./routes/CashierOrder.routes')
 const fileUpload = require("express-fileupload");
+const analysisRoutes=require("./routes/analysis.route")
 const rateLimit = require("express-rate-limit");
 const helmet = require('helmet');
 const mongoSanatize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+
+
+
+
 
 const app = express();
 const PORT = APP_CONFIG.PORT || 3000;
@@ -42,7 +47,7 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/seller',slellerRoutes);
 app.use('/order',orderRoutes);
-app.use('/cashier',CashierOrderRouted)
+app.use("/analysis",analysisRoutes)
 
 app.use(
   fileUpload({

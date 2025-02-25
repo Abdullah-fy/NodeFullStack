@@ -10,6 +10,7 @@ async function createUser(firstName, lastName, email, password, role) {
       lastName,
       email,
       password,
+      passwordConfirm:password,
       role 
     });
     const savedUser = await newUser.save();
@@ -103,6 +104,30 @@ async function UpdateisActiveStatus(email,Status) {
 
 }
 
+async function getSpecificUsers(usersrole) {
+    try{
+        const Users= await User.find({role:usersrole});
+        if(Users.length==0){
+          return "There is no users with this  role"
+        }
+        return Users;
+    }catch(error){
+      throw new Error("Failed connect to database");
+    }
+}
+async function getUserById(userid) {
+  try{
+    //console.log("service"+mongoose.Types.ObjectId(userid))
+     const user=await User.findOne({_id:new mongoose.Types.ObjectId(userid)})
+     return user;
+  }catch(error){
+    console.log("error from userservice");
+    throw new Error("cant connect to DB"+error.message);
+  }
+  
+  
+}
+
 module.exports = {
   createUser,
   getUserByEmail,
@@ -110,4 +135,6 @@ module.exports = {
   deleteUser,
   getAllUsers,
   UpdateisActiveStatus,
+  getSpecificUsers,
+  getUserById
 };
