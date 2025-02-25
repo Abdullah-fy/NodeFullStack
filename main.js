@@ -7,7 +7,7 @@ const cartRoutes = require("./routes/cart.routes");
 const { authenticateToken } = require('./middlewares/authontication.middleware');
 const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
-const slellerRoutes=require ('./routes/seller.routes');
+const sellerRoutes=require ('./routes/seller.routes');
 const orderRoutes=require ('./routes/order.routes');
 const CashierOrderRouted=require('./routes/CashierOrder.routes')
 const fileUpload = require("express-fileupload");
@@ -45,7 +45,7 @@ app.use(express.json()); // middleware
 app.use("/cart", cartRoutes);
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
-app.use('/seller',slellerRoutes);
+app.use('/seller',sellerRoutes);
 app.use('/order',orderRoutes);
 app.use("/analysis",analysisRoutes)
 

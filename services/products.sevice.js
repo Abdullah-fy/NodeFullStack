@@ -1,7 +1,17 @@
-const {getProducts, AddProduct, DeleteProduct, UpdateProduct, getById, getFilteredProducts,getUnActiveProducts}=require ('../repos/products.repos');
+const {getProducts, AddProduct, DeleteProduct, UpdateProduct, getById, getFilteredProducts,getUnActiveProducts, getOnlineProducts}= require ('../repos/products.repos');
+const ProductRepo = require('../repos/products.repos');
 const {upload} =require ('./media.service');
 const mongoose=require ('mongoose');
 const Product = require('../models/product.model');
+const Stock = require('../models/stock.model');
+
+const getOnlineProductsService = async () => {
+    const products = await getOnlineProducts();
+    if (products.error) {
+      throw new Error(products.error);  
+    }
+    return products;
+  };
 
 const GetUproducts=async ()=>{
     console.log("Inside getproducts service");
@@ -29,6 +39,16 @@ const CreateProduct = async (req) => {
     const imageUrls = await upload(imagesArray);
     const productId = new mongoose.Types.ObjectId();
 
+
+    const stockData = {
+        productId: productId,
+        supplierId: req.body.supplierId,
+        status: 'approved'
+    };
+
+    const newStock = new Stock(stockData);
+    await newStock.save();
+
     const productData = {
         _id: req.body.id,
         name: req.body.name,
@@ -37,7 +57,8 @@ const CreateProduct = async (req) => {
         category: req.body.category,
         images: imageUrls,
         stockQuantity: Number(req.body.stockQuantity),
-        sellerinfo: req.body.sellerinfo,
+        stockId: newStock._id,
+        isActive: true
     };
 
     console.log('from service :'+productData);
@@ -117,6 +138,7 @@ module.exports={
     getFilteredProductsServices,
     getAllProductUnactive,
     SoftDeleteProduct,
-    DeleteAllproductsSeller
+    DeleteAllproductsSeller,
+    getOnlineProductsService
 };
 

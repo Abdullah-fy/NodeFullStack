@@ -1,6 +1,19 @@
-const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById, getFilteredProductsServices,getAllProductUnactive,SoftDeleteProduct,DeleteAllproductsSeller} =require('../services/products.sevice');
+const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById, getFilteredProductsServices,getAllProductUnactive,SoftDeleteProduct,DeleteAllproductsSeller, getOnlineProductsService} = require('../services/products.sevice');
+const productService = require('../services/products.sevice');
 const Product = require('../models/product.model')
+
 class SellerProductsController{
+
+    static async getOnlineProducts(req, res) {
+        try {
+            const products = await getOnlineProductsService();
+            return res.status(200).json(products);
+          } catch (error) {
+            console.error("error fetching online products:", error);
+            return res.status(500).json("internal server error");
+          }
+    }
+
     static async getAllProducts(req,res,next){
         console.log("Before calling products.service getprods");
         try {
@@ -57,7 +70,7 @@ class SellerProductsController{
             if(error.message=='Product is not defined'||error.message=='Product not found')
                 res.status(404).json({ message: error.message });
             else
-            res.status(500).json({ message: 'Server error', error: error.message });
+                res.status(500).json({ message: 'Server error', error: error.message });
         }
     };
 
@@ -68,7 +81,7 @@ class SellerProductsController{
             // console.log("received filters:", req.query); 
         
             let filter = {}; 
-        
+            
             if (search) {
                 filter.name = { $regex: search, $options: "i" }; 
             }
@@ -84,7 +97,7 @@ class SellerProductsController{
             let products = await Product.find(filter); 
         
             // console.log("filtered products:", products); 
-            res.json(products); 
+            res.status(200).json(products); 
         } 
         catch (error) {
             console.error("error fetching filtered products:", error);
@@ -128,6 +141,17 @@ class SellerProductsController{
     }
 
 }
+
+// router.get("/onlineProducts", async (req, res) => {
+//     try {
+//       const products = await getOnlineProductsService();
+//       res.json(products);
+//     } catch (error) {
+//       res.status(500).json({ error: "Error fetching online products" });
+//     }
+//   });
+  
+//   module.exports = router;
 
 module.exports=SellerProductsController;
 

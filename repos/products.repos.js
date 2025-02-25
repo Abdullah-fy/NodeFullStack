@@ -1,4 +1,37 @@
-const Product =require('../models/product.model');
+const Product = require('../models/product.model.js');
+const Inventory = require('../models/Inventory.js');
+
+const getOnlineProducts = async () => {
+  try {
+    console.log("fetching online products");
+    
+    // populate productId with all fields 
+    const inventory = await Inventory.findOne({ branchLocation: "online" })
+
+    const invProducts=inventory.products;
+      
+
+    console.log("inventory:", inventory);
+
+    if (!inventory || !Array.isArray(inventory.products)) {
+      console.log("no inventory found or invalid product list.");
+      return [];
+    }
+
+    const onlineProducts = invProducts
+      .filter((invProduct) => invProduct.stock > 0 && invProduct.productId)
+      .map((invProduct) => ({
+        _id: invProduct.productId,
+        stock: invProduct.stock, 
+        createdAt: invProduct.productId.createdAt, 
+      }));
+
+    return onlineProducts;
+  } catch (error) {
+    console.error("error fetching online products:", error);
+    throw error;
+  }
+};
 
 const getProducts= async()=>{
     try{
@@ -124,5 +157,6 @@ module.exports={
     UpdateProduct,
     getById,
     getFilteredProducts,
-    getUnActiveProducts
+    getUnActiveProducts,
+    getOnlineProducts
 };
