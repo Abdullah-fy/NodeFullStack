@@ -9,7 +9,6 @@ const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
 const slellerRoutes=require ('./routes/seller.routes');
 const orderRoutes=require('./routes/order.routes');
-const orderRoutes=require ('./routes/order.routes');
 const CashierOrderRouted=require('./routes/CashierOrder.routes')
 const fileUpload = require("express-fileupload");
 const analysisRoutes=require("./routes/analysis.route")
@@ -23,7 +22,7 @@ const xss = require('xss-clean');
 
 //
 const mongoose = require("mongoose");
-const Inventory=require('./models/inventory.model');
+const Inventory=require('./models/Inventory');
 
 
 const app = express();
@@ -65,10 +64,8 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/seller',slellerRoutes);
 app.use('/order',orderRoutes);
-app.use('/order',orderRoutes);
 app.use("/analysis",analysisRoutes);
-app.use("/cashier",CashierOrderRouted)
-app
+app.use("/cashier",CashierOrderRouted);
 // Connect to Database and Start Server
 (async function () {
   try {

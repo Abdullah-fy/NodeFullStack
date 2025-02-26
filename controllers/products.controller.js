@@ -1,5 +1,5 @@
 const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById, getFilteredProductsServices,getAllProductUnactive,SoftDeleteProduct,DeleteAllproductsSeller, getOnlineProductsService} = require('../services/products.sevice');
-const productService = require('../services/products.sevice');
+//const productService = require('../services/products.sevice');
 const Product = require('../models/product.model')
 
 class SellerProductsController{

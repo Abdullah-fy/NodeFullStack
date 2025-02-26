@@ -1,7 +1,6 @@
-const Product =require('../models/product.model');
 const mongoose=require ('mongoose');
 const {upload}=require('../services/media.service');
-const Inventory=require('../models/inventory.model');
+const Inventory=require('../models/Inventory.js');
 const Product = require('../models/product.model.js');
 
 const getOnlineProducts = async () => {
