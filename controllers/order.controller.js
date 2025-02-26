@@ -1,20 +1,19 @@
 const OrderService = require('../services/order.service');
-const orderService = require('../services/order.service');
-
 
 class orderController {
     //1-create order
     static async createOrder(req, res) {
         try {
-            const { customerId, PhoneNumber, paymentMethod, shippingAddress } = req.body;
+            const { customerId, PhoneNumber, paymentMethod, shippingAddress ,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode} = req.body;
 
             //Validate body
-            if (!customerId || !PhoneNumber || !paymentMethod || !shippingAddress) {
-                return res.status(400).json({ message: 'Missing required fields' })
+            if (!customerId || !PhoneNumber || !paymentMethod || !shippingAddress || !CreditCardNumber|| !ExpiryMonth  || !ExpiryYear || !CVVCode) {
+                console.log(customerId, PhoneNumber, paymentMethod, shippingAddress ,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode)
+                return res.status(400).json({ message: `Missing required fieldsssss`})
             };
 
             //call service
-            const order = await orderService.createOrder(customerId, PhoneNumber, paymentMethod, shippingAddress);
+            const order = await OrderService.createOrder(customerId, PhoneNumber, paymentMethod, shippingAddress,CreditCardNumber,ExpiryMonth,ExpiryYear,CVVCode);
 
             return res.status(201).json(order);
         } catch (error) {
@@ -22,7 +21,7 @@ class orderController {
         }
 
     }
-
+ 
     //2-get all order by filter
     static async getAllOrders(req,res){
         try{
@@ -62,7 +61,7 @@ class orderController {
     static async getOrdersBySellerId(req,res){
         try{
             const{sellerId}=req.params;
-            const orders=await orderService.getOrdersbySellerId(sellerId);
+            const orders=await OrderService.getOrdersbySellerId(sellerId);
 
             if(!orders.length){
                 return res.status(404).json({message:"No orders found"});
@@ -73,18 +72,47 @@ class orderController {
         }
     }
 
-    static async updateorderStatus(req,res){
+    //5-update payment status
+    static async updatePaymentStatus(req,res){
+        try{
+            const{orderId,newStatus}=req.body;
+            const order = await OrderService.updatePaymentStatus(orderId,newStatus);
+
+            return res.status(201).json(order);
+        }catch(error){
+            return res.status(500).json({ message: error.message });
+        }
+    }
+
+    //6-update item statues
+    static async updateItemStatus(req,res){
         try {
-            console.log('inside update item staus');
-            console.log(req.params);
-            const { orderId, productId } = req.params;  
-            const { newStatus } = req.body;
-            console.log('new status: '+newStatus);
-            console.log('order id: '+orderId);
-           let order= orderService.updatestatus(orderId,productId,newStatus);
-            return res.status(200).json(order);
+            const{orderId,productId,newStatus}=req.body;
+            const order=await OrderService.updateItem(orderId,productId,newStatus);
+            return res.status(201).json(order);
         } catch (error) {
-            res.status(500).json({ message: error.message });
+            return res.status(500).json({message : error.message});
+        }
+    }
+
+    static async getAllordersGeneral(req,res){
+        try{
+            const orders= await OrderService.findAllorder();
+            res.status(200).json(orders);
+        }catch(error){
+            res.status(500).json({message:error.message})
+        }
+    }
+
+    static async getOrderById(req,res){
+        try{
+            const id=req.body.id;
+            const order=await OrderService.getOrderById(id);
+            res.status(200).json(order);
+            
+        }catch(error){
+            res.status(500).json({error:error.message})
+
         }
     }
 }

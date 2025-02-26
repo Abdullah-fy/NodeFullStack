@@ -21,22 +21,21 @@ const OrderSchema = new Schema({
   ],
   paymentDetails: {
     totalAmount: { type: Number, required: true },
+    theRest:{type: Number,default:0},
     paymentMethod: {
       type: String,
       enum: ['credit_card', 'debit_card', 'paypal', 'bank_transfer', 'cash_on_delivery'],
       required: true
     },
+    CreditCardNumber:{ type: Number, required: true },
+    ExpiryMonth:{type: Number, required: true},
+    ExpiryYear:{type: Number, required: true},
+    CVVCode:{type: Number, required: true},
     shippingAddress: { type: String, required: true },
-    paymentStatus: {
-      type: String,
-      enum: ['pending', 'paid', 'failed'],
-      default: 'pending',
-      required: true
-    }
   },
   Orderstatus: {
     type: String,
-    enum: ['pending', 'processing', 'shipped', 'canceled'],
+    enum: ['pending','shipped', 'canceled'],
     default: 'pending',
     required: true
   },

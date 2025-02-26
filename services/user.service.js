@@ -1,4 +1,5 @@
 const User = require('../models/user.model'); // Import the User model
+const {DeleteAllproductsSeller}=require('./products.sevice')
 const mongoose = require('mongoose');
 
 async function createUser(firstName, lastName, email, password, role) {
@@ -9,7 +10,8 @@ async function createUser(firstName, lastName, email, password, role) {
       lastName,
       email,
       password,
-      role
+      passwordConfirm:password,
+      role 
     });
     const savedUser = await newUser.save();
     console.log('User created:', savedUser);
@@ -85,6 +87,9 @@ async function UpdateisActiveStatus(email,Status) {
     if(user.isActive!=Status){
       user.isActive=Status;
       await User.updateOne({ email }, { $set: { isActive: Status } });
+      if(user.isActive==false){
+        DeleteAllproductsSeller(id);
+      }
       return { success: true, message: "Status updated successfully" };
 
     }else {
@@ -99,11 +104,37 @@ async function UpdateisActiveStatus(email,Status) {
 
 }
 
+async function getSpecificUsers(usersrole) {
+    try{
+        const Users= await User.find({role:usersrole});
+        if(Users.length==0){
+          return "There is no users with this  role"
+        }
+        return Users;
+    }catch(error){
+      throw new Error("Failed connect to database");
+    }
+}
+async function getUserById(userid) {
+  try{
+    //console.log("service"+mongoose.Types.ObjectId(userid))
+     const user=await User.findOne({_id:new mongoose.Types.ObjectId(userid)})
+     return user;
+  }catch(error){
+    console.log("error from userservice");
+    throw new Error("cant connect to DB"+error.message);
+  }
+  
+  
+}
+
 module.exports = {
   createUser,
   getUserByEmail,
   updateUser,
   deleteUser,
   getAllUsers,
-  UpdateisActiveStatus
+  UpdateisActiveStatus,
+  getSpecificUsers,
+  getUserById
 };

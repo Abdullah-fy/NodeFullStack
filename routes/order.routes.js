@@ -1,10 +1,11 @@
 const express=require('express');
 const orderController=require('../controllers/order.controller');
+const AuthController=require('../controllers/authController')
 
 const router=express.Router();
 
 //1-placed order
-router.post("/add",orderController.createOrder)
+router.post("/add",AuthController.protect,AuthController.restrictTo("customer"),orderController.createOrder)
 //2-get all orders ==> for admin 
 /*
 need to send
@@ -15,10 +16,14 @@ router.get("/getAllOrders",orderController.getAllOrders)
 router.get("/getOrders/:customerId",orderController.getOrdersByCustomerId);
 //4-get orders by sellerId
 router.get("/getSellerOrders/:sellerId",orderController.getOrdersBySellerId);
-
-router.put('/:orderId/items/:productId/status', orderController.updateorderStatus);
-
-
+//5-updatepatment status ==>cahier
+router.patch("/updatepayment",orderController.updatePaymentStatus);
+//6-update item in order =>seller and clerk 
+router.patch('/update-item',orderController.updateItemStatus);
+//7-get all orders
+router.get("/getAllordersGeneral",orderController.getAllordersGeneral)
+//8-get order by Id
+router.get("/getorderById",orderController.getOrderById)
 
 
 

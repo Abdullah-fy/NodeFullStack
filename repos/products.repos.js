@@ -2,8 +2,39 @@ const Product =require('../models/product.model');
 const mongoose=require ('mongoose');
 const {upload}=require('../services/media.service');
 const Inventory=require('../models/inventory.model');
+const Product = require('../models/product.model.js');
 
+const getOnlineProducts = async () => {
+  try {
+    console.log("fetching online products");
+    
+    // populate productId with all fields 
+    const inventory = await Inventory.findOne({ branchLocation: "online" })
 
+    const invProducts=inventory.products;
+      
+
+    console.log("inventory:", inventory);
+
+    if (!inventory || !Array.isArray(inventory.products)) {
+      console.log("no inventory found or invalid product list.");
+      return [];
+    }
+
+    const onlineProducts = invProducts
+      .filter((invProduct) => invProduct.stock > 0 && invProduct.productId)
+      .map((invProduct) => ({
+        _id: invProduct.productId,
+        stock: invProduct.stock, 
+        createdAt: invProduct.productId.createdAt, 
+      }));
+
+    return onlineProducts;
+  } catch (error) {
+    console.error("error fetching online products:", error);
+    throw error;
+  }
+};
 
 const getProducts= async()=>{
     try{
@@ -22,21 +53,6 @@ const getProducts= async()=>{
 const getById = async (id) => {
   return await Product.findById(id);
 };
-
-//get products by sel ID
-const getProductsBySeller = async (sellerId) => {
-  try {
-      const products = await Product.find({ sellerId, isActive: true });
-      console.log("users.repos getProductsBySeller result:", products);
-      return products;
-  } catch (error) {
-      console.error("Error in prod.repos getProductsBySeller:", error);
-      throw error;
-  }
-};
-
-
-
 
 const AddProduct=async (productData) =>{
   console.log("start of add product ");
@@ -96,11 +112,69 @@ const UpdateProduct=async(id,ProductData)=>{
     }
 }
 
+//fetch filtered products
+const getFilteredProducts = async({category, minPrice, maxPrice, searchInput}) => {
+  try {
+    const productsCollection = db.collection('products');
+    const query = {};
+
+    //filter by category
+    if(category) {
+      query.category = category;
+  
+    }
+
+    //filter by price
+    if(minPrice !== undefined || maxPrice !== undefined) {
+      query.price = {};
+      if(minPrice !== undefined) {
+          query.price.$gte = parseFloat(minPrice); // to ensure price is a number
+       
+      }
+      if(maxPrice !== undefined) {
+          query.price.$lte = parseFloat(maxPrice);
+       
+      }
+    }
+    
+    //excute query
+    const products = await productsCollection.find(query);
+    // console.log("filtered products: ", products);
+    if(products) {
+      return products; 
+    }
+
+  }
+  catch(error) {
+    console.log('error in get filtered products: ', error);
+    throw error;
+  }
+}
+
+const getUnActiveProducts=async ()=>{
+
+  try{
+    const products=await Product.find({isActive:false})||[];
+    if(products!=[]){
+      return products;
+    }else{
+      throw new Error("No Available Products");
+    }
+
+  }catch(error){
+    throw new Error("Fail in get Products");
+  }
+  
+
+}
+
 module.exports={
     getProducts,
     AddProduct,
     DeleteProduct,
     UpdateProduct,
     getById,
-    getProductsBySeller
+    getFilteredProducts,
+    getUnActiveProducts,
+    getOnlineProducts
 };

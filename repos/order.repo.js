@@ -54,22 +54,24 @@ class orderRepo {
         }
     }
 
-    //4-Update Order
-    static async updateOrder(_id, updateData) {
-        try {
-            const updateOrder = await Order.findByIdAndUpdate(
-                _id,
-                { $set: updateData },
-                { new: true },
-            );
-            if (!updateOrder) {
-                throw new Error("Order not found");
-            }
-            return updateOrder
-        } catch (error) {
-            throw new Error("order not found")
-        }
-    }
+    
+    //4-update payment method
+    // static async updatepayment(_id, updateData) {
+    //     try {
+    //         const updateOrder = await Order.findByIdAndUpdate(
+    //             _id,
+    //             { $set: { "paymentDetails.paymentStatus": updateData } }, 
+    //             { new: true }
+    //         );
+    //         if (!updateOrder) {
+    //             throw new Error("Order not found");
+    //         }
+    //         return updateOrder
+    //     } catch (error) {
+    //         throw new Error("order not found")
+    //     }
+    // }
+
 
     //5-get order by sellerId ==> for seller
     static async findOrderBySellerId(sellerId) {
@@ -88,16 +90,47 @@ class orderRepo {
             if (!order) {
                 throw new Error('Order not Found');
             }
-            const item = order.items.find(i => i.productId == productId);
+            const item = order.items.find(i => i.productId === productId);
             if (!item) {
                 throw new Error('Item not found')
             }
             item.itemStatus = newStatus;
             await order.save();
-
-            return order
+            return order;
+            
         } catch (error) {
             throw new Error(`Error updating item status: ${error.message}`);
+        }
+    }
+
+    //7-getorderbyid
+    static async getOrderById(orderId){
+        try {
+            const order = Order.findById(orderId);
+            return order;
+        } catch (error) {
+            throw new Error(`Error finding order ${error.message}`)
+        }
+    }
+
+    //8-change order statues
+    static async changeOrderStatues(orderId){
+        try {
+            const order=await Order.findById(orderId);
+            //check items
+            let allAproved = true;
+                order.items.forEach(item => {
+                    if (item.itemStatus == "pending") {
+                        allAproved = false;
+                    }
+                });
+                if(allAproved){
+                order.Orderstatus="shipped";
+                await order.save();
+                }
+            
+        } catch (error) {
+            throw new Error(`Failed to change order staues ${error.message}`)
         }
     }
 

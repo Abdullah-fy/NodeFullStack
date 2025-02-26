@@ -8,7 +8,7 @@ async function createUserController(req, res) {
     res.status(201).json(user);
   } catch (error) {
     console.error('Error in createUserController:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -79,9 +79,9 @@ async function UpdateisActiveStatusController(req,res) {
      const status=req.body;
      const ismodified= await userService.UpdateisActiveStatusController(email,status);
      if(ismodified){
-      res.status(200).json({message:"isActive Status Update Succesfully"})
+       return res.status(200).json({message:"isActive Status Update Succesfully"})
      }
-      res.status(404).json(ismodified);
+      res.status(400).json(ismodified);
 
   }catch(error){
     console.error("Error in UpdateisActiveStatusController:" ,error);
@@ -89,6 +89,33 @@ async function UpdateisActiveStatusController(req,res) {
   }
 }
 
+async function getUsersSpecificRole(req,res){
+  try{
+    const role=req.params.role;
+    if (!role || typeof role !== 'string') {
+      return res.status(400).json({ message: "Invalid or missing role parameter" });
+  }
+    const Users=await userService.getSpecificUsers(role)
+    res.status(200).json(Users)
+  }catch(error){
+    res.status(500).json({message:error.message})
+  }
+}
+
+async function getuserById(req,res) {
+  try{
+    const {id}=req.body;
+    console.log(id);
+    const user=await userService.getUserById(id);
+    if(!user){
+      res.status(400).json({message:"invalid id"});
+    }
+    res.status(200).json(user);
+  }catch(error){
+    res.status(500).json({message:error.message})
+  }
+  
+}
 module.exports = {
   createUserController,
   getUserByEmailController,
@@ -96,6 +123,8 @@ module.exports = {
 
   deleteUserController,
   getAllUsersController,
-  UpdateisActiveStatusController
+  UpdateisActiveStatusController,
+  getUsersSpecificRole,
+  getuserById
 };
 

@@ -10,6 +10,8 @@ router.delete('/products/:id',SellerProductsController.DeleteProduct);
 router.get('/products/:id',SellerProductsController.GetProductByID); //check seller id 
 router.get('/products/seller/:sellerId', SellerProductsController.getProductsBySeller);
 router.patch('/products/:id/stock', SellerProductsController.updateStock);
+router.get('/filteredProducts', SellerProductsController.getFilteredProducts);
+router.get("/onlineProducts", SellerProductsController.getOnlineProducts);
 
 
 module.exports=router;

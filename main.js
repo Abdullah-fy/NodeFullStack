@@ -9,7 +9,17 @@ const authRoutes = require('./routes/auth.route');
 const userRoutes = require('./routes/user.route');
 const slellerRoutes=require ('./routes/seller.routes');
 const orderRoutes=require('./routes/order.routes');
+const orderRoutes=require ('./routes/order.routes');
+const CashierOrderRouted=require('./routes/CashierOrder.routes')
 const fileUpload = require("express-fileupload");
+const analysisRoutes=require("./routes/analysis.route")
+const rateLimit = require("express-rate-limit");
+const helmet = require('helmet');
+const mongoSanatize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+
+
+
 
 //
 const mongoose = require("mongoose");
@@ -18,6 +28,12 @@ const Inventory=require('./models/inventory.model');
 
 const app = express();
 const PORT = APP_CONFIG.PORT || 3000;
+//http headers security
+app.use(helmet());  
+//protect against nosql inject
+app.use(mongoSanatize());
+// protect against html
+app.use(xss());
 
 app.use(cors()); // Enable CORS
 
@@ -35,14 +51,24 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // Should come after fileUpload
 
 
+// decrease number of trial
+// const limiter = rateLimit({
+//   max: 5,
+//   windowMs: 60*60*1000,
+//   message: "to many requests, please try again after one hour"
+// });
+// app.use('/auth', limiter);
+
 //add your rout here......................
 app.use("/cart", cartRoutes);
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/seller',slellerRoutes);
 app.use('/order',orderRoutes);
-
-
+app.use('/order',orderRoutes);
+app.use("/analysis",analysisRoutes);
+app.use("/cashier",CashierOrderRouted)
+app
 // Connect to Database and Start Server
 (async function () {
   try {
