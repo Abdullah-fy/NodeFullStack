@@ -16,6 +16,7 @@ const rateLimit = require("express-rate-limit");
 const helmet = require('helmet');
 const mongoSanatize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const { cashierdetail } = require("./repos/cashierOrder.repo");
 
 
 
@@ -65,7 +66,18 @@ app.use('/users', userRoutes);
 app.use('/seller',slellerRoutes);
 app.use('/order',orderRoutes);
 app.use("/analysis",analysisRoutes);
-app.use("/cashier",CashierOrderRouted);
+app.use("/cashier",CashierOrderRouted)
+
+app.use(
+  fileUpload({
+    useTempFiles: false,
+    tempFileDir: "/tmp/", 
+    limits: { fileSize: 50 * 1024 * 1024 },
+    createParentPath: true, 
+    safeFileNames: true, 
+    preserveExtension: true, 
+  })
+);
 // Connect to Database and Start Server
 (async function () {
   try {
