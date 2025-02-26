@@ -16,6 +16,7 @@ const rateLimit = require("express-rate-limit");
 const helmet = require('helmet');
 const mongoSanatize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
+const { cashierdetail } = require("./repos/cashierOrder.repo");
 
 
 
@@ -47,7 +48,8 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/seller',sellerRoutes);
 app.use('/order',orderRoutes);
-app.use("/analysis",analysisRoutes)
+app.use("/analysis",analysisRoutes);
+app.use("/cashier",CashierOrderRouted)
 
 app.use(
   fileUpload({
