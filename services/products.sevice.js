@@ -1,3 +1,4 @@
+const { json } = require('express');
 const {getProducts,AddProduct,DeleteProduct,UpdateProduct,getById}=require ('../repos/products.repos');
 const {upload} =require ('./media.service');
 const mongoose=require ('mongoose');
@@ -16,29 +17,48 @@ const GetProductById = async (id) => {
     return product;
 };
 
+//get prod by sel id 
+const GetProductsBySeller = async (sellerId) => {
+    console.log("Inside GetProductsBySeller service for sellerId:", sellerId);
+    return getProductsBySeller(sellerId);
+};
+
+
 const CreateProduct = async (req) => {
-    console.log("Inside createproduct service");
+    console.log(`Inside createproduct service`);
+    console.log(req.body._id);
+    console.log(req.files?.images);
     if (!req.files?.images) {
+        console.log('error');
         throw new Error("Please upload at least one image");
     }
+    else
+        console.log('uploaded');
 
     const imagesArray = Array.isArray(req.files.images) 
     ? req.files.images 
     : [req.files.images];
 
     const imageUrls = await upload(imagesArray);
+
     //const productId = new mongoose.Types.ObjectId();
 
     const productData = {
-        _id: req.body.id,
+        _id: req.body._id,
         name: req.body.name,
         description: req.body.description,
         price: Number(req.body.price),
         category: req.body.category,
         images: imageUrls,
         stockQuantity: Number(req.body.stockQuantity),
-        sellerinfo: req.body.sellerinfo,
+        sellerinfo:JSON.parse(req.body.sellerInfo),
+        // sellerinfo: {
+        //     id: req.body.sellerinfoid, 
+        //     name: req.body.sellerinfoname
+        // }
     };
+
+    console.log(productData);
 
     console.log('from service :'+productData);
 
@@ -67,6 +87,7 @@ module.exports={
     CreateProduct,
     deleteProduct,
     updateProduct,
-    GetProductById
+    GetProductById,
+    GetProductsBySeller
 };
 

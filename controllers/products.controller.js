@@ -1,4 +1,5 @@
 const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById} =require('../services/products.sevice');
+const Product =require('../models/product.model');
 
 
 
@@ -29,11 +30,20 @@ class SellerProductsController{
 
     static async AddProduct(req,res){
         try{
+            console.log(req.body);
+            console.log('Received Data:', req.body); 
+
+            if (req.files) {
+              console.log('Received Files:', req.files);
+            }
+            
             const addedProduct=await CreateProduct(req);
+            
             console.log('controller layer '+addedProduct);
             res.status(200).json({message:'product added successfully'});
         }catch(error){
-            res.status(500).json({message:'addProduct service error'});
+            console.log(error);
+            res.status(500).json({message:error.message});
         }
     };
 
@@ -63,6 +73,53 @@ class SellerProductsController{
             res.status(500).json({ message: 'Server error', error: error.message });
         }
     };
+
+    //get prod by sel id 
+    static async getProductsBySeller(req, res, next) {
+        const sellerId = req.params.sellerId;
+        console.log("Fetching products for sellerId:", sellerId);
+        
+        if (!sellerId) {
+            return res.status(400).json({ message: "Seller ID is required." });
+        }
+    
+        try {
+            const products = await GetProductsBySeller(sellerId);
+            res.status(200).json(products);
+        } catch (exception) {
+            console.error("Error in /products/seller/:sellerId route:", exception);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
+
+    // product update stock
+    static async updateStock  (req, res) {
+    try {
+      const { id } = req.params;
+      const { quantity } = req.body;
+  
+      if (!quantity || quantity < 1) {
+        return res.status(400).json({ message: 'Invalid quantity' });
+      }
+  
+      const product = await Product.findByIdAndUpdate(
+        id,
+        { $inc: { stockQuantity: quantity } },
+        { new: true }
+      );
+  
+      if (!product) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+  
+      res.json(product);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+
+  
+ 
 }
 
 module.exports=SellerProductsController;

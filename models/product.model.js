@@ -16,7 +16,8 @@ const ProductSchema = new Schema({
     sellerinfo: { 
         id: { type: String, ref: 'User' }, 
         name: { type: String } 
-    }
+    },
+    isActive:{type:Boolean,default:true}
 }, { timestamps: true });  // added time stamp
 
 const Product = mongoose.model("Product", ProductSchema);

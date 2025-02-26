@@ -1,12 +1,13 @@
 const Product =require('../models/product.model');
 const mongoose=require ('mongoose');
 const {upload}=require('../services/media.service');
+const Inventory=require('../models/inventory.model');
 
 
 
 const getProducts= async()=>{
     try{
-        const products=await Product.find();
+        const products=await Product.find({isActive:true});
         console.log("users.repos getprod result:", products);
         if(products)
           return products;
@@ -22,6 +23,19 @@ const getById = async (id) => {
   return await Product.findById(id);
 };
 
+//get products by sel ID
+const getProductsBySeller = async (sellerId) => {
+  try {
+      const products = await Product.find({ sellerId, isActive: true });
+      console.log("users.repos getProductsBySeller result:", products);
+      return products;
+  } catch (error) {
+      console.error("Error in prod.repos getProductsBySeller:", error);
+      throw error;
+  }
+};
+
+
 
 
 const AddProduct=async (productData) =>{
@@ -30,8 +44,23 @@ const AddProduct=async (productData) =>{
 
         console.log("inside addpro2 ");
         const newProduct = new Product(productData);
-        console.log('p data passed '+productData);
-        console.log('productData from shcesma '+newProduct );
+        
+       // console.log('p data passed '+productData);
+       // console.log('productData from shcesma '+newProduct );
+
+       const result = await Inventory.findOneAndUpdate(
+            { branchLocation: 'online' },
+            {
+                $push: {
+                  products: { productId: newProduct._id, stock:newProduct.stockQuantity}
+                }
+            },
+            { new: true, upsert: false }
+        );
+
+        if (!result) {
+            throw new error;
+        }
     
         return await newProduct.save();
       } catch (error) {
@@ -43,7 +72,7 @@ const AddProduct=async (productData) =>{
 
 const DeleteProduct= async(id)=>{
     try {
-        const deletedproduct = await Product.findByIdAndDelete(id);
+        const deletedproduct = await Product.findByIdAndUpdate(id,{isActive:false});
         if (!deletedproduct) {
           throw new Error('product not found');
         }
@@ -72,5 +101,6 @@ module.exports={
     AddProduct,
     DeleteProduct,
     UpdateProduct,
-    getById
+    getById,
+    getProductsBySeller
 };
