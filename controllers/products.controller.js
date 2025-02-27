@@ -1,5 +1,5 @@
 const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById, getFilteredProductsServices,getAllProductUnactive,SoftDeleteProduct,DeleteAllproductsSeller, getOnlineProductsService} = require('../services/products.sevice');
-const productService = require('../services/products.sevice');
+//const productService = require('../services/products.sevice');
 const Product = require('../models/product.model')
 
 class SellerProductsController{
@@ -39,11 +39,20 @@ class SellerProductsController{
 
     static async AddProduct(req,res){
         try{
+            console.log(req.body);
+            console.log('Received Data:', req.body); 
+
+            if (req.files) {
+              console.log('Received Files:', req.files);
+            }
+            
             const addedProduct=await CreateProduct(req);
+            
             console.log('controller layer '+addedProduct);
             res.status(200).json({message:'product added successfully'});
         }catch(error){
-            res.status(500).json({message:'addProduct service error'});
+            console.log(error);
+            res.status(500).json({message:error.message});
         }
     };
 

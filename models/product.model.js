@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const { Schema, Types } = mongoose;
 
 const ProductSchema = new Schema({
-    _id:{ type: String, required: true}, 
     name: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
@@ -17,7 +16,7 @@ const ProductSchema = new Schema({
         id: { type: String, ref: 'User' }, 
         name: { type: String } 
     },
-    isActive: { type: Boolean, default: true },
+    isActive:{type:Boolean,default:true},
     isBestSeller: {type: Boolean, default: false},
     salesCount: {type: Number, default: 0}
 }, { timestamps: true });  // added time stamp

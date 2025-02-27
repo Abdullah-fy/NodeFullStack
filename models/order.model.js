@@ -11,7 +11,7 @@ const OrderSchema = new Schema({
       quantity: { type: Number, required: true },
       price: { type: Number, required: true }, 
       isAvailable: { type: Boolean, default: true },
-      itemStatus: {
+      itemStatus: {  //inn
         type: String,
         enum: ['rejected','pending', 'approved'],
         default: 'pending',

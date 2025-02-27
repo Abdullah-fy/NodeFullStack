@@ -1,5 +1,7 @@
+const mongoose=require ('mongoose');
+const {upload}=require('../services/media.service');
+const Inventory=require('../models/Inventory.model.js')
 const Product = require('../models/product.model.js');
-const Inventory = require('../models/Inventory.model.js');
 
 const getOnlineProducts = async () => {
   try {
@@ -35,7 +37,7 @@ const getOnlineProducts = async () => {
 
 const getProducts= async()=>{
     try{
-        const products=await Product.find();
+        const products=await Product.find({isActive:true});
         console.log("users.repos getprod result:", products);
         if(products)
           return products;
@@ -57,8 +59,23 @@ const AddProduct=async (productData) =>{
 
         console.log("inside addpro2 ");
         const newProduct = new Product(productData);
-        console.log('p data passed '+productData);
-        console.log('productData from shcesma '+newProduct );
+        
+       // console.log('p data passed '+productData);
+       // console.log('productData from shcesma '+newProduct );
+
+       const result = await Inventory.findOneAndUpdate(
+            { branchLocation: 'online' },
+            {
+                $push: {
+                  products: { productId: newProduct._id, stock:newProduct.stockQuantity}
+                }
+            },
+            { new: true, upsert: false }
+        );
+
+        if (!result) {
+            throw new error;
+        }
     
         return await newProduct.save();
       } catch (error) {
@@ -70,7 +87,7 @@ const AddProduct=async (productData) =>{
 
 const DeleteProduct= async(id)=>{
     try {
-        const deletedproduct = await Product.findByIdAndDelete(id);
+        const deletedproduct = await Product.findByIdAndUpdate(id,{isActive:false});
         if (!deletedproduct) {
           throw new Error('product not found');
         }
