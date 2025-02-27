@@ -18,12 +18,12 @@ const mongoSanatize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const { cashierdetail } = require("./repos/cashierOrder.repo");
 
-
+const branchRoutes=require("./routes/branch.route");
 
 
 //
 const mongoose = require("mongoose");
-const Inventory=require('./models/Inventory');
+const Inventory=require("./models/Inventory.model");
 
 
 const app = express();
@@ -67,6 +67,7 @@ app.use('/seller',slellerRoutes);
 app.use('/order',orderRoutes);
 app.use("/analysis",analysisRoutes);
 app.use("/cashier",CashierOrderRouted)
+app.use("/branch",branchRoutes);
 
 app.use(
   fileUpload({

@@ -4,7 +4,7 @@ const Product = require('../models/product.model');
 const CartService = require('./cart.service');
 const { Error } = require('mongoose');
 const Order = require('../models/order.model');
-const Inventory =require('../models/Inventory')
+const Inventory =require('../models/Inventory.model')
 
 class OrderService {
     //1-create order

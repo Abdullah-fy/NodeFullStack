@@ -3,7 +3,7 @@ const CartRepo = require('../repos/cart.repo');
 const Product = require('../models/product.model');
 const CartService = require('./cart.service')
 const { Error } = require('mongoose');
-const Inventory =require('../models/Inventory')
+const Inventory =require('../models/Inventory.model')
 const staff=require('../models/staff');
 
 //1-place order in branch
