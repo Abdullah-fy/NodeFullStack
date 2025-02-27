@@ -1,5 +1,5 @@
 const Product = require('../models/product.model.js');
-const Inventory = require('../models/Inventory.js');
+const Inventory = require('../models/Inventory.model.js');
 
 const getOnlineProducts = async () => {
   try {

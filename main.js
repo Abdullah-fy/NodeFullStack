@@ -17,7 +17,7 @@ const helmet = require('helmet');
 const mongoSanatize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 
-
+const branchRoutes=require('./routes/branch.route');
 
 
 
@@ -48,6 +48,7 @@ app.use('/users', userRoutes);
 app.use('/seller',sellerRoutes);
 app.use('/order',orderRoutes);
 app.use("/analysis",analysisRoutes)
+app.use("/branch",branchRoutes);
 
 app.use(
   fileUpload({
