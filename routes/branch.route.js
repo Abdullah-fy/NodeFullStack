@@ -14,4 +14,7 @@ router.post('/addIntervalorder',branchesController.addIntervalorder)
 //getallorders
 router.get('/getallclerkorders/:userId',branchesController.getAllorders);
 
+//get order by id
+router.get('/getorder/:orderId',branchesController.getorderById);
+
 module.exports=router;

@@ -44,13 +44,24 @@ class branchesService{
       
           if (branch) {
             console.log('Branch ID:', branch.branchId); // Log the branchId directly
-            const orders = await RestockOrder.find({ branchId: branch.branchId });
+            const orders = await RestockOrder.find({ branchId: branch.branchId ,status:"pending"});
             console.log('Orders:', orders);
             return orders;
           }
           return [];
         } catch (error) {
           throw new Error(error.message + " from serv catch");
+        }
+      }
+      static async getorder(Id){
+        try{
+          const order=await RestockOrder.findOne({_id:Id})
+          console.log(Id)
+
+          console.log(order)
+          return order;
+        }catch(erro){
+          throw new Error("couldnt connect to db")
         }
       }
 }

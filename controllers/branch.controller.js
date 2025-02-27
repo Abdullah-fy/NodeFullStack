@@ -41,6 +41,19 @@ class branchesController{
             res.status(500).json({message:error.message})
         }
     }
+    static async getorderById(req,res){
+        try{
+            const {orderId}=req.params;
+            if(orderId){
+                const order=await branchesService.getorder(orderId);
+               return res.status(200).json(order);
+            }
+            res.status(400).json({message:"enter a valid Id"});
+            
+        }catch(error){
+            res.status(500).json({message:error.message});
+        }
+    }
 }
 
 module.exports=branchesController;
