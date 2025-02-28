@@ -30,8 +30,7 @@ app.use(mongoSanatize());
 // protect against html
 app.use(xss());
 
-app.use(cors()); // Enable CORS
-app.use(express.json()); // middleware
+
 
 // decrease number of trial
 // const limiter = rateLimit({
@@ -42,13 +41,10 @@ app.use(express.json()); // middleware
 // app.use('/auth', limiter);
 
 //add your rout here......................
-app.use("/cart", cartRoutes);
-app.use('/auth', authRoutes);
-app.use('/users', userRoutes);
-app.use('/seller',sellerRoutes);
-app.use('/order',orderRoutes);
-app.use("/analysis",analysisRoutes)
 
+
+////////////////////         NEVER EVER MOVE THIS MIDDLEWARE FROM IT IS PLACE/////////////
+/// PLEASE LEAVE IT AT FIRST TO BE THE FIRST HANDLER  ///////////
 app.use(
   fileUpload({
     useTempFiles: false,
@@ -59,6 +55,17 @@ app.use(
     preserveExtension: true, 
   })
 );
+
+app.use(cors()); // Enable CORS
+app.use(express.json()); // middleware
+app.use("/cart", cartRoutes);
+app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
+app.use('/seller',sellerRoutes);
+app.use('/order',orderRoutes);
+app.use("/analysis",analysisRoutes);
+
+
 // Connect to Database and Start Server
 (async function () {
   try {

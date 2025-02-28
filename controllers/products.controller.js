@@ -1,9 +1,9 @@
-const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById, getFilteredProductsServices,getAllProductUnactive,SoftDeleteProduct,DeleteAllproductsSeller, getOnlineProductsService} = require('../services/products.sevice');
-const productService = require('../services/products.sevice');
+const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById,GetProductsBySeller, getFilteredProductsServices,getAllProductUnactive,SoftDeleteProduct,DeleteAllproductsSeller, getOnlineProductsService} = require('../services/products.sevice');
+//const productService = require('../services/products.sevice');
 const Product = require('../models/product.model')
 
 class SellerProductsController{
-
+    ///fatma
     static async getOnlineProducts(req, res) {
         try {
             const products = await getOnlineProductsService();
@@ -13,66 +13,6 @@ class SellerProductsController{
             return res.status(500).json("internal server error");
           }
     }
-
-    static async getAllProducts(req,res,next){
-        console.log("Before calling products.service getprods");
-        try {
-            const products= await GetUproducts();
-            res.status(200).json(products);
-        } catch (execption) {
-            console.error("Error in /products route:", exception); 
-            res.status(500).json({ message: "Internal server error" });   
-        }
-    }
-
-    static async updateAProduct(req,res){
-        try{
-            const updatedproduct=await updateProduct(req.params.id,req.body);
-            return res.status(200).json({message: `product updated successfully`});
-        }catch(error){
-            if(error.message=='product not found')
-                return res.status(404).json({ message: error.message });
-            console.error("Error in /products route:", error.message);
-            return res.status(500).json({message:'updateProducts service error', error: error.message });
-        }
-    }
-
-    static async AddProduct(req,res){
-        try{
-            const addedProduct=await CreateProduct(req);
-            console.log('controller layer '+addedProduct);
-            res.status(200).json({message:'product added successfully'});
-        }catch(error){
-            res.status(500).json({message:'addProduct service error'});
-        }
-    };
-
-    static async DeleteProduct(req,res){
-        try{
-            console.log(req.params.id);
-            const deletedProduct=await deleteProduct(String(req.params.id));
-            res.status(200).json({message:`product ${deletedProduct} deleted successfully`});
-        }catch(error){
-            if(error.message=='Product not found')
-                res.status(404).json({ message: error.message });
-            else
-            res.status(500).json({ message: 'Server error', error: error.message });
-        }
-    };
-
-     static async GetProductByID(req,res){
-        try{
-            const {id}=req.params;
-            const product=await GetProductById(id);
-            res.status(200).json(product);
-        }catch(error){
-            console.log(error.message);
-            if(error.message=='Product is not defined'||error.message=='Product not found')
-                res.status(404).json({ message: error.message });
-            else
-                res.status(500).json({ message: 'Server error', error: error.message });
-        }
-    };
 
     static async getFilteredProducts(req, res) {
        
@@ -140,18 +80,123 @@ class SellerProductsController{
 
     }
 
-}
 
-// router.get("/onlineProducts", async (req, res) => {
-//     try {
-//       const products = await getOnlineProductsService();
-//       res.json(products);
-//     } catch (error) {
-//       res.status(500).json({ error: "Error fetching online products" });
-//     }
-//   });
+
+    //Esraa
+    static async getAllProducts(req,res,next){
+        console.log("Before calling products.service getprods");
+        try {
+            const products= await GetUproducts();
+            res.status(200).json(products);
+        } catch (execption) {
+            console.error("Error in /products route:", exception); 
+            res.status(500).json({ message: "Internal server error" });   
+        }
+    }
+
+    static async updateAProduct(req,res){
+        try{
+            const updatedproduct=await updateProduct(req.params.id,req.body);
+            return res.status(200).json({message: `product updated successfully`});
+        }catch(error){
+            if(error.message=='product not found')
+                return res.status(404).json({ message: error.message });
+            console.error("Error in /products route:", error.message);
+            return res.status(500).json({message:'updateProducts service error', error: error.message });
+        }
+    }
+
+    static async AddProduct(req,res){
+        try{
+            console.log(req.body);
+            console.log('Received Data:', req.body); 
+
+            if (req.files) {
+              console.log('Received Files:', req.files);
+            }
+            
+            const addedProduct=await CreateProduct(req);
+            
+            console.log('controller layer '+addedProduct);
+            res.status(200).json({message:'product added successfully'});
+        }catch(error){
+            console.log(error);
+            res.status(500).json({message:error.message});
+        }
+    };
+
+    static async DeleteProduct(req,res){
+        try{
+            console.log(req.params.id);
+            const deletedProduct=await deleteProduct(String(req.params.id));
+            res.status(200).json({message:`product ${deletedProduct} deleted successfully`});
+        }catch(error){
+            if(error.message=='Product not found')
+                res.status(404).json({ message: error.message });
+            else
+            res.status(500).json({ message: 'Server error', error: error.message });
+        }
+    };
+
+    static async GetProductByID(req,res){
+        try{
+            const {id}=req.params;
+            const product=await GetProductById(id);
+            res.status(200).json(product);
+        }catch(error){
+            console.log(error.message);
+            if(error.message=='Product is not defined'||error.message=='Product not found')
+                res.status(404).json({ message: error.message });
+            else
+            res.status(500).json({ message: 'Server error', error: error.message });
+        }
+    };
+
+    //get prod by sel id 
+    static async GetProductsBySellercontroller(req, res, next) {
+        const sellerId = req.params.sellerId;
+        console.log("Fetching products for sellerId:", sellerId);
+        
+        if (!sellerId) {
+            return res.status(400).json({ message: "Seller ID is required." });
+        }
+    
+        try {
+            const products = await GetProductsBySeller(sellerId);
+            res.status(200).json(products);
+        } catch (exception) {
+            console.error("Error in /products/seller/:sellerId route:", exception);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
+
+    // product update stock
+    static async updateStock  (req, res) {
+    try {
+      const { id } = req.params;
+      const { quantity } = req.body;
   
-//   module.exports = router;
+      if (!quantity || quantity < 1) {
+        return res.status(400).json({ message: 'Invalid quantity' });
+      }
+  
+      const product = await Product.findByIdAndUpdate(
+        id,
+        { $inc: { stockQuantity: quantity } },
+        { new: true }
+      );
+  
+      if (!product) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+  
+      res.json(product);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+
+}
 
 module.exports=SellerProductsController;
 
