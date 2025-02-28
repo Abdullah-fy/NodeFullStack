@@ -17,7 +17,7 @@ const helmet = require('helmet');
 const mongoSanatize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const { cashierdetail } = require("./repos/cashierOrder.repo");
-
+const inventoryProductRoute = require('./routes/Invertory.Product.Router');
 const branchRoutes=require("./routes/branch.route");
 
 
@@ -68,6 +68,7 @@ app.use('/order',orderRoutes);
 app.use("/analysis",analysisRoutes);
 app.use("/cashier",CashierOrderRouted)
 app.use("/branch",branchRoutes);
+app.use("/inbranch", inventoryProductRoute );
 
 app.use(
   fileUpload({
