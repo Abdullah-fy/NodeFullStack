@@ -137,9 +137,7 @@ exports.removeProductFromBranch = async (req, res) => {
   }
 };
 
-// ==============================
-// CRUD OPERATIONS FOR ALL PRODUCTS
-// ==============================
+//////////////////////////////===========================MAIN ==================
 
 // Get all products across all branches
 exports.getAllProducts = async (req, res) => {
