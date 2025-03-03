@@ -1,7 +1,7 @@
 const CartRepo = require('../repos/cart.repo');
 const Product = require('../models/product.model');
 const { Error } = require('mongoose');
-const Inventory = require('../models/Inventory')
+const Inventory = require('../models/Inventory.model')
 
 
 class CartService {

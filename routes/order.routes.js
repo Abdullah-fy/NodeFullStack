@@ -25,6 +25,9 @@ router.get("/getAllordersGeneral",orderController.getAllordersGeneral)
 //8-get order by Id
 router.get("/getorderById",orderController.getOrderById)
 
-
+/// specific branch orders 
+router.get('/getBranchOrders/:branchId', orderController.getOrdersByBranchId);
+//Update Item Status
+router.patch('/uuupdate-item', orderController.uuupdateItemStatus);
 
 module.exports=router; 

@@ -11,7 +11,7 @@ const RestockOrderSchema = new Schema({
   }, 
   products: [
     {
-      productId: { type: Types.ObjectId, ref: "Product", required: true }, 
+      productId: { type: String, ref: "Product", required: true }, 
       quantity: { type: Number, required: true, min: 1 } 
     }
   ],

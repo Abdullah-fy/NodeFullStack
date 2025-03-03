@@ -1,6 +1,6 @@
 const Order=require('../models/CashierOrder.model');
 const staff=require('../models/staff')
-const inventory=require('../models/Inventory')
+const inventory=require('../models/Inventory.model')
 const Cart=require('../models/cart.model')
 
 class CashierOrderRebo{

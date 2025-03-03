@@ -3,6 +3,7 @@ const { Schema, Types } = mongoose;
 
 const InventorySchema = new Schema({
   branchLocation:{type: String, required: true },
+  branchId:{type :Types.ObjectId,required:true},
   products: [
     {
       productId: {type: String, ref: "Product", required: true },

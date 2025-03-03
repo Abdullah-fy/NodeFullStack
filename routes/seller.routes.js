@@ -1,4 +1,5 @@
 const express=require('express');
+const authConrroller = require('../controllers/authController');
 const SellerProductsController=require ('../controllers/products.controller');
 
 const router=express.Router();
