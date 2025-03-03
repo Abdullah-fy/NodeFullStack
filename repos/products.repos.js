@@ -148,7 +148,7 @@ console.log("start of add product ");
       );
 
       if (!result) {
-          throw new error;
+        throw new Error("Product creation failed due to missing result.");
       }
   
       return await newProduct.save();

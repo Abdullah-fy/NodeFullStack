@@ -102,6 +102,10 @@ const CreateProduct = async (req) => {
 
     const imageUrls = await upload(imagesArray);
 
+
+    console.log("Parsed Seller Info:", req.body.sellerInfo);
+console.log("Final Seller Info:", JSON.parse(req.body.sellerInfo));
+
     //const productId = new mongoose.Types.ObjectId();
 
     const productData = {

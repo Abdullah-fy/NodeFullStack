@@ -1,6 +1,7 @@
 const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById,GetProductsBySeller, getFilteredProductsServices,getAllProductUnactive,SoftDeleteProduct,DeleteAllproductsSeller, getOnlineProductsService} = require('../services/products.sevice');
-//const productService = require('../services/products.sevice');
-const Product = require('../models/product.model')
+const Inventory=require('../models/Inventory');
+const Product = require('../models/product.model');
+const mongoose = require("mongoose");
 
 class SellerProductsController{
     ///fatma
@@ -172,30 +173,58 @@ class SellerProductsController{
 
     // product update stock
     static async updateStock  (req, res) {
-    try {
-      const { id } = req.params;
-      const { quantity } = req.body;
-  
-      if (!quantity || quantity < 1) {
-        return res.status(400).json({ message: 'Invalid quantity' });
-      }
-  
-      const product = await Product.findByIdAndUpdate(
-        id,
-        { $inc: { stockQuantity: quantity } },
-        { new: true }
-      );
-  
-      if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
-      }
-  
-      res.json(product);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
+        try {
+            const { id } = req.params;
+            const { quantity } = req.body;
+        
+            // Validate input
+            if (!quantity || quantity < 1) {
+              return res.status(400).json({ message: "Invalid quantity" });
+            }
+        
+           
+        
+            // Update main product stock
+            const product = await Product.findByIdAndUpdate(
+              id,
+              { $inc: { stockQuantity: quantity } },
+              { new: true, runValidators: true }
+            );
+        
+            if (!product) {
+              return res.status(404).json({ message: "Product not found" });
+            }
+        
+            const productIdString = product._id.toString();
+        
+            // Update online branch inventory
+            const inventoryUpdate = await Inventory.findOneAndUpdate(
+              {
+                branchLocation: 'online',
+                'products.productId': productIdString
+              },
+              {
+                $inc: { 'products.$.stock': quantity }
+              },
+              { new: true }
+            );
+        
+            if (!inventoryUpdate) {
+              return res.status(404).json({
+                message: "Product updated, but not found in online branch inventory"
+              });
+            }
+        
+            res.json({
+              product,
+              inventory: inventoryUpdate
+            });
+        
+          } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: err.message });
+          }
     }
-  };
-
 }
 
 module.exports=SellerProductsController;
