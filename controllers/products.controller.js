@@ -1,5 +1,6 @@
 const {deleteProduct,CreateProduct,GetUproducts,updateProduct,GetProductById, getFilteredProductsServices,getAllProductUnactive,SoftDeleteProduct,DeleteAllproductsSeller, getOnlineProductsService} = require('../services/products.sevice');
 //const productService = require('../services/products.sevice');
+const ProductRepo=require('../repos/products.repos');
 const Product = require('../models/product.model')
 
 class SellerProductsController{
@@ -147,6 +148,16 @@ class SellerProductsController{
         res.status(500).json({message:error.message});
     }
 
+    }
+    static async getBranchProduct(req,res){
+        try{
+            const {BranchId}=req.params;
+            const Products=await ProductRepo.getBranchProducts(BranchId);
+
+            return res.status(200).json(Products);
+        }catch(error){
+            res.status(500).json({message:error.message})
+        }
     }
 
 }

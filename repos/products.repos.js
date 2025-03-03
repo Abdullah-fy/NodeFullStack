@@ -8,7 +8,7 @@ const getOnlineProducts = async () => {
     console.log("fetching online products");
     
     // populate productId with all fields 
-    const inventory = await Inventory.findOne({ branchLocation: "online" })
+    const inventory = await Inventory.findOne({ branchLocation: "Online" })
 
     const invProducts=inventory.products;
       
@@ -34,6 +34,7 @@ const getOnlineProducts = async () => {
     throw error;
   }
 };
+
 
 const getProducts= async()=>{
     try{
@@ -167,6 +168,21 @@ const getUnActiveProducts=async ()=>{
 
 }
 
+const getBranchProducts = async (BranchId) => {
+  try {
+    const inventoryDocs = await Inventory.find({ branchId: BranchId }, { products: 1, _id: 0 });
+    console.log(inventoryDocs);
+    const productIds = inventoryDocs.flatMap(doc => doc.products.map(product => product.productId));
+    console.log(productIds);
+    const productsWithDetails = await Product.find({ _id: { $in: productIds } });
+    console.log(productsWithDetails);
+    return productsWithDetails;
+  } catch (error) {
+    console.error("Error fetching branch products:", error);
+    throw error;
+  }
+};
+
 module.exports={
     getProducts,
     AddProduct,
@@ -175,5 +191,6 @@ module.exports={
     getById,
     getFilteredProducts,
     getUnActiveProducts,
-    getOnlineProducts
+    getOnlineProducts,
+    getBranchProducts
 };
