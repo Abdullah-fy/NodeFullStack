@@ -17,7 +17,7 @@ const helmet = require('helmet');
 const mongoSanatize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const { cashierdetail } = require("./repos/cashierOrder.repo");
-
+const inventoryProductRoute = require('./routes/Invertory.Product.Router');
 const branchRoutes=require("./routes/branch.route");
 
 
@@ -37,6 +37,8 @@ app.use(xss());
 
 app.use(cors()); // Enable CORS
 
+////////////////////         NEVER EVER MOVE THIS MIDDLEWARE FROM IT IS PLACE/////////////
+/// PLEASE LEAVE IT AT FIRST TO BE THE FIRST HANDLER  ///////////
 app.use(
   fileUpload({
     useTempFiles: false,
@@ -68,17 +70,12 @@ app.use('/order',orderRoutes);
 app.use("/analysis",analysisRoutes);
 app.use("/cashier",CashierOrderRouted)
 app.use("/branch",branchRoutes);
+app.use("/inbranch", inventoryProductRoute );
 
-app.use(
-  fileUpload({
-    useTempFiles: false,
-    tempFileDir: "/tmp/", 
-    limits: { fileSize: 50 * 1024 * 1024 },
-    createParentPath: true, 
-    safeFileNames: true, 
-    preserveExtension: true, 
-  })
-);
+
+
+
+
 // Connect to Database and Start Server
 (async function () {
   try {

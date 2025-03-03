@@ -115,7 +115,67 @@ class orderController {
 
         }
     }
+
+    static async getOrdersByBranchId(req, res, next) {
+        try {
+            const { branchId } = req.params;
+    
+            // Fetch orders where at least one item belongs to the specified branchId
+            const orders = await Order.find({
+                items: { $elemMatch: { sellerId: branchId } }
+            })
+            .populate('items.product') // Populate product details
+            .sort({ createdAt: -1 }); // Sort by creation date (newest first)
+    
+            res.status(200).json({
+                status: 'success',
+                data: orders,
+            });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+        static async uuupdateItemStatus  (req, res, next) {
+        try {
+            const { orderId, itemId, status } = req.body;
+    
+            // Find the order
+            const order = await Order.findById(orderId);
+    
+            if (!order) {
+                return res.status(404).json({
+                    status: 'fail',
+                    message: 'Order not found',
+                });
+            }
+    
+            // Find the specific item in the order
+            const item = order.items.id(itemId);
+            if (!item) {
+                return res.status(404).json({
+                    status: 'fail',
+                    message: 'Item not found in the order',
+                });
+            }
+    
+            // Update the item's status
+            item.itemStatus = status;
+    
+            // Save the updated order
+            await order.save();
+    
+            res.status(200).json({
+                status: 'success',
+                message: 'Item status updated successfully',
+            });
+        } catch (err) {
+            next(err);
+        }
+    };
+
 }
+
 
 
 

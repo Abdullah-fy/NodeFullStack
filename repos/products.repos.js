@@ -1,7 +1,9 @@
+const Product =require('../models/product.model');
 const mongoose=require ('mongoose');
 const {upload}=require('../services/media.service');
-const Inventory=require('../models/Inventory.model.js')
-const Product = require('../models/product.model.js');
+const Inventory=require('../models/Inventory.model');
+
+
 
 const getOnlineProducts = async () => {
   try {
@@ -34,83 +36,6 @@ const getOnlineProducts = async () => {
     throw error;
   }
 };
-
-
-const getProducts= async()=>{
-    try{
-        const products=await Product.find({isActive:true});
-        console.log("users.repos getprod result:", products);
-        if(products)
-          return products;
-    }
-    catch(error)
-    {
-        console.error("Error in prod.repos getprod:", error);
-        throw error; 
-    }
-};
-
-const getById = async (id) => {
-  return await Product.findById(id);
-};
-
-const AddProduct=async (productData) =>{
-  console.log("start of add product ");
-    try {
-
-        console.log("inside addpro2 ");
-        const newProduct = new Product(productData);
-        
-       // console.log('p data passed '+productData);
-       // console.log('productData from shcesma '+newProduct );
-
-       const result = await Inventory.findOneAndUpdate(
-            { branchLocation: 'online' },
-            {
-                $push: {
-                  products: { productId: newProduct._id, stock:newProduct.stockQuantity}
-                }
-            },
-            { new: true, upsert: false }
-        );
-
-        if (!result) {
-            throw new error;
-        }
-    
-        return await newProduct.save();
-      } catch (error) {
-        console.error("Database save error:", error);
-        throw new Error(`Failed to create product: ${error.message}`);    
-      }
-};
-
-
-const DeleteProduct= async(id)=>{
-    try {
-        const deletedproduct = await Product.findByIdAndUpdate(id,{isActive:false});
-        if (!deletedproduct) {
-          throw new Error('product not found');
-        }
-        return deletedproduct;
-      } catch (error) { 
-        console.error("Database save error:", error);
-        throw new Error(`Failed to delete product: ${error.message}`);  
-      }
-}
-
-const UpdateProduct=async(id,ProductData)=>{
-    try{
-       const updatedproduct= await Product.findByIdAndUpdate({_id:id},ProductData,{ new: true });
-       if (!updatedproduct) {
-        throw new Error('product not found');
-      }
-      console.log(updatedproduct);
-      return updatedproduct;
-    }catch(error){
-      throw new Error(error.message); 
-    }
-}
 
 //fetch filtered products
 const getFilteredProducts = async({category, minPrice, maxPrice, searchInput}) => {
@@ -184,11 +109,16 @@ const getBranchProducts = async (BranchId) => {
 };
 
 module.exports={
-    getProducts,
-    AddProduct,
-    DeleteProduct,
-    UpdateProduct,
-    getById,
+  //esraa
+  getProducts,
+  AddProduct,
+  DeleteProduct,
+  UpdateProduct,
+  getById,
+  getProductsBySeller_,
+
+
+    //fatma
     getFilteredProducts,
     getUnActiveProducts,
     getOnlineProducts,

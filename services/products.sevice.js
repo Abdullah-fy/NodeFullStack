@@ -1,5 +1,4 @@
-const { json } = require('express');
-const {getProducts, AddProduct, DeleteProduct, UpdateProduct, getById, getFilteredProducts,getUnActiveProducts, getOnlineProducts}= require ('../repos/products.repos');
+const {getProducts, AddProduct, DeleteProduct, UpdateProduct, getById,getProductsBySeller_, getFilteredProducts,getUnActiveProducts, getOnlineProducts}= require ('../repos/products.repos');
 const ProductRepo = require('../repos/products.repos');
 const {upload} =require ('./media.service');
 const mongoose=require ('mongoose');
@@ -13,6 +12,57 @@ const getOnlineProductsService = async () => {
     }
     return products;
   };
+
+//fetch filtered products
+const getFilteredProductsServices = async (filter) => {
+    try {
+        const products = await Product.find(filter);
+        return products;
+    }
+    catch(error) {
+        console.log('error in get filtered products: ', error);
+    }
+}
+
+const getAllProductUnactive=async ()=>{
+    try{
+        const AllProducts= getUnActiveProducts();
+        return AllProducts;
+    }catch(error){
+            throw new Error(error);
+    }
+   
+}
+
+const SoftDeleteProduct=async (id)=>{
+    try{
+      const productTodelete= await  Product.findByIdAndUpdate(
+            id,
+            { isActive: false }, 
+            { new: true }  
+        )
+        if(!productTodelete){
+            throw new Error(`couldnt find product with id :${id}`)
+        }
+        return true;
+    }catch(error){
+        throw new Error("Fialed To Update Product ")
+    }
+}
+const DeleteAllproductsSeller=async (seller_id)=>{
+    try{
+        const DeletedProducts=await Product.updateMany({"sellerinfo.id":seller_id}, {$set: { isActive: false }});
+        if(DeletedProducts.modifiedCount==0){
+            throw new Error("no  any Products deleted for this Seller")
+        }
+        return {success:true ,message :"Products Deleted Successfuly"};
+    }catch(error){
+        throw new Error("couldnt connect to DB Server ");
+    }
+}
+
+
+///////////////Esraa
 
 const GetUproducts=async ()=>{
     console.log("Inside getproducts service");
@@ -30,7 +80,7 @@ const GetProductById = async (id) => {
 //get prod by sel id 
 const GetProductsBySeller = async (sellerId) => {
     console.log("Inside GetProductsBySeller service for sellerId:", sellerId);
-    return getProductsBySeller(sellerId);
+    return getProductsBySeller_(sellerId);
 };
 
 
@@ -51,17 +101,11 @@ const CreateProduct = async (req) => {
 
     const imageUrls = await upload(imagesArray);
 
-    const productId = new mongoose.Types.ObjectId();
 
+    console.log("Parsed Seller Info:", req.body.sellerInfo);
+console.log("Final Seller Info:", JSON.parse(req.body.sellerInfo));
 
-    const stockData = {
-        productId: productId,
-        supplierId: req.body.supplierId,
-        status: 'approved'
-    };
-
-    const newStock = new Stock(stockData);
-    await newStock.save();
+    //const productId = new mongoose.Types.ObjectId();
 
     const productData = {
         _id: req.body._id,
@@ -102,59 +146,21 @@ const updateProduct=async(id, data)=>{
     return updatedproduct;
 };
 
-//fetch filtered products
-const getFilteredProductsServices = async (filter) => {
-    try {
-        const products = await Product.find(filter);
-        return products;
-    }
-    catch(error) {
-        console.log('error in get filtered products: ', error);
-    }
-}
 
-const getAllProductUnactive=async ()=>{
-    try{
-        const AllProducts= getUnActiveProducts();
-        return AllProducts;
-    }catch(error){
-            throw new Error(error);
-    }
-   
-}
-const SoftDeleteProduct=async (id)=>{
-    try{
-      const productTodelete= await  Product.findByIdAndUpdate(
-            id,
-            { isActive: false }, 
-            { new: true }  
-        )
-        if(!productTodelete){
-            throw new Error(`couldnt find product with id :${id}`)
-        }
-        return true;
-    }catch(error){
-        throw new Error("Fialed To Update Product ")
-    }
-}
-const DeleteAllproductsSeller=async (seller_id)=>{
-    try{
-        const DeletedProducts=await Product.updateMany({"sellerinfo.id":seller_id}, {$set: { isActive: false }});
-        if(DeletedProducts.modifiedCount==0){
-            throw new Error("no  any Products deleted for this Seller")
-        }
-        return {success:true ,message :"Products Deleted Successfuly"};
-    }catch(error){
-        throw new Error("couldnt connect to DB Server ");
-    }
-}
+
+
+
 module.exports={
+
+    //esraa
     GetUproducts,
     CreateProduct,
     deleteProduct,
     updateProduct,
     GetProductById,
     GetProductsBySeller,
+
+    //fatma
     getFilteredProductsServices,
     getAllProductUnactive,
     SoftDeleteProduct,
