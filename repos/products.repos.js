@@ -10,7 +10,7 @@ const getOnlineProducts = async () => {
     console.log("fetching online products");
     
     // populate productId with all fields 
-    const inventory = await Inventory.findOne({ branchLocation: "online" })
+    const inventory = await Inventory.findOne({ branchLocation: "Online" })
 
     const invProducts=inventory.products;
       
@@ -36,6 +36,8 @@ const getOnlineProducts = async () => {
     throw error;
   }
 };
+
+
 
 //fetch filtered products
 const getFilteredProducts = async({category, minPrice, maxPrice, searchInput}) => {
@@ -185,6 +187,21 @@ const UpdateProduct=async(id,ProductData)=>{
   }
 }
 
+const getBranchProducts = async (BranchId) => {
+  try {
+    const inventoryDocs = await Inventory.find({ branchId: BranchId }, { products: 1, _id: 0 });
+    console.log(inventoryDocs);
+    const productIds = inventoryDocs.flatMap(doc => doc.products.map(product => product.productId));
+    console.log(productIds);
+    const productsWithDetails = await Product.find({ _id: { $in: productIds } });
+    console.log(productsWithDetails);
+    return productsWithDetails;
+  } catch (error) {
+    console.error("Error fetching branch products:", error);
+    throw error;
+  }
+};
+
 module.exports={
   //esraa
   getProducts,
@@ -198,5 +215,6 @@ module.exports={
     //fatma
     getFilteredProducts,
     getUnActiveProducts,
-    getOnlineProducts
+    getOnlineProducts,
+    getBranchProducts
 };
