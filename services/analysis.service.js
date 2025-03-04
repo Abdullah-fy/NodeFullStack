@@ -160,7 +160,9 @@ class AnalysisService {
       static async getBarnchAnalysis(BranchId){
         try{
 
-            const branch=await Branches.findOne({branchId:BranchId},{staff:1});
+            const branch=await Branches.findOne({_id:BranchId},{staff:1});
+            
+            console.log(branch);
             const CashierId=branch.staff.cashier;
             
             console.log(CashierId);

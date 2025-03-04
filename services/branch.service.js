@@ -30,6 +30,27 @@ class branchesService{
                 ]
               };
             const createdOrder = await RestockOrder.create(neworder);
+            
+            const { productId, quantity, from: branchId } = order;
+
+            
+            const result = await Inventory.findOneAndUpdate(
+              { _id: branchId }, 
+              {
+                $inc: { "products.$[product].stock": -quantity }
+              },
+              {
+                arrayFilters: [{ "product.productId": productId }], 
+                new: true 
+              }
+            );
+        
+            if (!result) {
+              throw new Error(`Branch or product not found for branch ID: ${branchId} and product ID: ${productId}`);
+            }
+        
+            
+        
             return createdOrder;
 
         }catch(error){
@@ -43,8 +64,8 @@ class branchesService{
           console.log('Branch object:', JSON.stringify(branch, null, 2)); // Log the entire branch object
       
           if (branch) {
-            console.log('Branch ID:', branch.branchId); // Log the branchId directly
-            const orders = await RestockOrder.find({ branchId: branch.branchId ,status:"pending"});
+            console.log('Branch ID:', branch._id); // Log the branchId directly
+            const orders = await RestockOrder.find({ branchId: branch._id ,status:"Pending"});
             console.log('Orders:', orders);
             return orders;
           }
@@ -64,6 +85,19 @@ class branchesService{
           throw new Error("couldnt connect to db")
         }
       }
+
+        static async getProdInBranche(BranchId){
+          try{
+            const branch=await Inventory.find({_id:BranchId},{products:1,_id:0});
+            console.log(branch);
+            console.log(branch[0].products)
+            const product=branch[0].products;
+            return product;
+          }catch(error){
+            throw new Error(`${error.message}`)
+          }
+
+        }
 }
 
 module.exports=branchesService;

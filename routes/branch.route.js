@@ -21,4 +21,9 @@ router.get('/getorder/:orderId',branchesController.getorderById);
 //get all PRduct Branch
 router.get('/getBranchProduct/:BranchId',Productcontroller.getBranchProduct);
 
+
+//product in branch
+router.get('/getProdInBranch/:BranchId',branchesController.getProdInBranch);
+
+
 module.exports=router;

@@ -189,7 +189,7 @@ const UpdateProduct=async(id,ProductData)=>{
 
 const getBranchProducts = async (BranchId) => {
   try {
-    const inventoryDocs = await Inventory.find({ branchId: BranchId }, { products: 1, _id: 0 });
+    const inventoryDocs = await Inventory.find({ _id: BranchId }, { products: 1, _id: 0 });
     console.log(inventoryDocs);
     const productIds = inventoryDocs.flatMap(doc => doc.products.map(product => product.productId));
     console.log(productIds);
